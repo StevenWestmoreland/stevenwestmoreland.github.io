@@ -6,10 +6,6 @@ subtitle:
 
 My name is Steven Westmoreland. I am a data scientist student out of Orlando, Florida with a passion for geek and nerd culture.
 
-- I rock a great mustache
-- I'm extremely loyal to my family
-
-What else do you need?
 
 ### Where to find me
 
