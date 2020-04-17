@@ -1,6 +1,6 @@
 ---
 layout: post
-title: First Analysis: Whiskies
+title: First Analysis On Whiskies
 subtitle: Interesting insights into high ranking whiskies
 gh-repo: daattali/beautiful-jekyll
 gh-badge: [star, fork, follow]
