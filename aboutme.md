@@ -10,7 +10,9 @@ My name is Steven Westmoreland. I am a data scientist student out of Orlando, Fl
 ### Where to find me
 
 LinkedIn:
+
 Twitter:
+
 Email:
 
 I also am part of a podcast, as well as run my own blog.
