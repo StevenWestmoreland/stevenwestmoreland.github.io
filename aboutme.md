@@ -1,16 +1,22 @@
 ---
 layout: page
 title: About me
-subtitle: Why you'd want to go on a date with me
+subtitle: 
 ---
 
-My name is Inigo Montoya. I have the following qualities:
+My name is Steven Westmoreland. I am a data scientist student out of Orlando, Florida with a passion for geek and nerd culture.
 
 - I rock a great mustache
 - I'm extremely loyal to my family
 
 What else do you need?
 
-### my history
+### Where to find me
 
-To be honest, I'm having some trouble remembering right now, so why don't you just watch [my movie](http://en.wikipedia.org/wiki/The_Princess_Bride_%28film%29) and it will answer **all** your questions.
+LinkedIn:
+Twitter:
+Email:
+
+I also am part of a podcast, as well as run my own blog.
+Podcast YouTube:[Podcast of Five Rings](https://www.youtube.com/channel/UCEAFCfJ-jIxeHvF6-6NL9PA/videos)
+Blog: [The Geeky Spirit](http://geekyspirit.com)
