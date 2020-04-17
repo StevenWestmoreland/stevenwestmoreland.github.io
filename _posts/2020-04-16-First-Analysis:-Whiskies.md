@@ -8,6 +8,8 @@ tags: [test]
 comments: true
 ---
 
+*If you would like to follow along, you can find the python notebook on my github [here](https://github.com/StevenWestmoreland/Whisky_Data_Projects/blob/master/FirstDataAnalysisOfWhiskies.ipynb).*
+
 ## About the Data Source
 The dataset being explored here is from [whiskyanalysis.com](https://whiskyanalysis.com/index.php/database/). It covers the Cost, Country, Type, and Class of an assortment of whiskies as well as the Cluster and Super Cluster of thier flavor profiles. It also includes the normalized Meta Critic score (as defined on his [methodology page](https://whiskyanalysis.com/index.php/methodology-introduction/methodology-metacritic-score-construction/)), the Standard Deviation of the normalized score, and the number of reviews that contributed to that score.
 
