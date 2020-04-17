@@ -16,5 +16,7 @@ Twitter:
 Email:
 
 I also am part of a podcast, as well as run my own blog.
+
 Podcast YouTube:[Podcast of Five Rings](https://www.youtube.com/channel/UCEAFCfJ-jIxeHvF6-6NL9PA/videos)
+
 Blog: [The Geeky Spirit](http://geekyspirit.com)
