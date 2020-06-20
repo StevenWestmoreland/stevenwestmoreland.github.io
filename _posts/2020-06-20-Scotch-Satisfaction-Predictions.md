@@ -639,9 +639,11 @@ scores = cross_val_score(CVRF_pipe, X_train, y_train, cv=k, scoring='accuracy')
 print(f'Accuracy for {k} folds:', scores)
 ```
 Out [38]:  
+```python
 Accuracy for 18 folds: [0.25531915 0.30851064 0.36170213 0.30851064 0.32978723 0.39361702
  0.34042553 0.38297872 0.38297872 0.38297872 0.34042553 0.31182796
  0.30107527 0.3655914  0.2688172  0.34408602 0.35483871 0.32258065]
+```
 
 In [39]:
 ```python
