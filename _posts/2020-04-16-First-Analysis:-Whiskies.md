@@ -77,23 +77,16 @@ In [ ]:
 ```python
 # Replace all NaN values for Cluster column with "U" for unknown
 whisky_df["Cluster"].fillna("U", inplace = True)
-whisky_df.head()
-```
-Out[ ]:
-```python
-Whisky	Meta Critic	STDEV	#	Cost	Class	Super Cluster	Cluster	Country	Type
-0	Ledaig 42yo Dusgadh	9.48	0.23	3	$$$$$+	SingleMalt-like	ABC	C	Scotland	Malt
-1	Laphroaig 27yo 57.4% 1980-2007 (OB, 5 Oloroso ...	9.42	0.22	4	$$$$$+	SingleMalt-like	ABC	C	Scotland	Malt
-2	Glenfarclas 40yo	9.30	0.27	17	$$$$$+	SingleMalt-like	ABC	A	Scotland	Malt
-3	Aberlour A'Bunadh (Batch 56)	9.25	0.24	3	$$$$	SingleMalt-like	ABC	A	Scotland	Malt
-4	Glengoyne 25yo	9.24	0.22	21	$$$$$+	SingleMalt-like	ABC	A	Scotland	Malt
 ```
 
 In [ ]:
+```python
 # Check that the number of "U" values are equal to the previous 
 # number of .isnull().sum() results for Cluster
 whisky_df['Cluster'].value_counts().sort_index()
+```
 Out[ ]:
+```python
 A      99
 B      50
 C     218
@@ -110,20 +103,30 @@ R3     46
 R4     60
 U     302
 Name: Cluster, dtype: int64
+```
+
 In [ ]:
+```python
 # Double checking is never bad. Check new isnull().sum()
 whisky_df['Cluster'].isnull().sum()
+```
 Out[ ]:
+```python
 0
-Restructuring the Data
+```
+
+# Restructuring the Data
 Some of the data needed to be changed into an easier form to work with. Cost was an ideal candidate for this due to the unwieldyness of the "$" values it used. I opted to use a numerical "grade" instead, where "A" represented the most expensive value band (>300 CAD) and "F" represented the lowest (<30 CAD).
 
 Country was another that could use some restructuring. There are significantly more Scotland entries than even the runner up, USA. In fact, anything below Ireland was almost neglible in comparison. Because of this, and considering the domain knowledge of general expected Country types, I combined everything from Sweden to France under the new entry "Other".
 
 In [ ]:
+```python
 # Checking the value counts for the most prime candidate to be restructured, Cost
 whisky_df['Cost'].value_counts().sort_index()
+```
 Out[ ]:
+```python
 $          87
 $$        201
 $$$       324
@@ -131,10 +134,15 @@ $$$$      580
 $$$$$     343
 $$$$$+    179
 Name: Cost, dtype: int64
+```
+
 In [ ]:
+```python
 # Checking the number of entries per country.
 whisky_df['Country'].value_counts()
+```
 Out[ ]:
+```python
 Scotland        928
 USA             292
 Canada          189
@@ -153,12 +161,15 @@ England           2
 Belgium           1
 France            1
 Name: Country, dtype: int64
+```
+
 In [ ]:
+```python
 # Remap "Cost" to a more usable form
 whisky_df["Cost Rank"] = whisky_df['Cost'].map({"$":"F", "$$":"E", "$$$":"D",
                                                 "$$$$":"C", "$$$$$":"B",
                                                 "$$$$$+":"A"})
-In [ ]:
+                                                
 # Remap all other countries into one
 whisky_df['Country Condensed'] = whisky_df['Country'].map({"Scotland":"Scotland",
                                                            "USA":"USA", "Canada":"Canada",
@@ -171,18 +182,14 @@ whisky_df['Country Condensed'] = whisky_df['Country'].map({"Scotland":"Scotland"
                                                            "South Africa":"Other",
                                                            "England":"Other", "Belgium":"Other",
                                                            "France":"Other"})
+```
+
 In [ ]:
-whisky_df.head()
-Out[ ]:
-Whisky	Meta Critic	STDEV	#	Cost	Class	Super Cluster	Cluster	Country	Type	Cost Rank	Country Condensed
-0	Ledaig 42yo Dusgadh	9.48	0.23	3	$$$$$+	SingleMalt-like	ABC	C	Scotland	Malt	A	Scotland
-1	Laphroaig 27yo 57.4% 1980-2007 (OB, 5 Oloroso ...	9.42	0.22	4	$$$$$+	SingleMalt-like	ABC	C	Scotland	Malt	A	Scotland
-2	Glenfarclas 40yo	9.30	0.27	17	$$$$$+	SingleMalt-like	ABC	A	Scotland	Malt	A	Scotland
-3	Aberlour A'Bunadh (Batch 56)	9.25	0.24	3	$$$$	SingleMalt-like	ABC	A	Scotland	Malt	C	Scotland
-4	Glengoyne 25yo	9.24	0.22	21	$$$$$+	SingleMalt-like	ABC	A	Scotland	Malt	A	Scotland
-In [ ]:
+```python
 whisky_df['Country Condensed'].value_counts()
+```
 Out[ ]:
+```python
 Scotland    928
 USA         292
 Canada      189
@@ -190,9 +197,14 @@ Other       151
 Ireland      81
 Japan        75
 Name: Country Condensed, dtype: int64
+```
+
 In [ ]:
+```python
 whisky_df['Cost Rank'].value_counts().sort_index()
+```
 Out[ ]:
+```python
 A    179
 B    343
 C    580
@@ -200,14 +212,19 @@ D    324
 E    201
 F     87
 Name: Cost Rank, dtype: int64
-Determining Useful Data Comparisons
+```
+
+# Determining Useful Data Comparisons
 One of the most important key skills of a Data Scientist is the ability to determine what data comparisons are ideal. And key to ths is understanding what the question or problem these comparisons are answering.
 
 In our case, we are looking at the commonalities between the highest ranking whiskies. 'Meta Critic', the normalized score for each whisky, becomes the variable that we will compare everything else to.
 
 In [ ]:
+```python
 pd.crosstab(whisky_df['Meta Critic'], whisky_df['Country Condensed'])
+```
 Out[ ]:
+```python
 Country Condensed	Canada	Ireland	Japan	Other	Scotland	USA
 Meta Critic						
 6.47	0	0	0	1	0	0
@@ -222,10 +239,14 @@ Meta Critic
 9.51	0	0	0	0	1	0
 9.54	1	0	0	0	0	0
 208 rows × 6 columns
+```
 
 In [ ]:
+```python
 whisky_df.groupby(["Cost Rank"])["Meta Critic"].mean()
+```
 Out[ ]:
+```python
 Cost Rank
 A    8.961229
 B    8.744927
@@ -234,9 +255,14 @@ D    8.386883
 E    8.224677
 F    7.881609
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 whisky_df["Meta Critic"].groupby(whisky_df["Cost Rank"]).mean()
+```
 Out[ ]:
+```python
 Cost Rank
 A    8.961229
 B    8.744927
@@ -245,9 +271,14 @@ D    8.386883
 E    8.224677
 F    7.881609
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 whisky_df.groupby(["Cluster"])["Meta Critic"].mean()
+```
 Out[ ]:
+```python
 Cluster
 A     8.798788
 B     8.588400
@@ -265,9 +296,14 @@ R3    8.591522
 R4    8.612833
 U     8.313411
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 whisky_df.groupby(["Country"])["Meta Critic"].mean()
+```
 Out[ ]:
+```python
 Country
 Belgium         8.310000
 Canada          8.411005
@@ -287,9 +323,14 @@ Tasmania        8.534000
 USA             8.595788
 Wales           8.101250
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 whisky_df.groupby(['Country Condensed'])["Meta Critic"].mean()
+```
 Out[ ]:
+```python
 Country Condensed
 Canada      8.411005
 Ireland     8.415556
@@ -298,9 +339,14 @@ Other       8.548411
 Scotland    8.581940
 USA         8.595788
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 whisky_df.groupby(['Type'])["Meta Critic"].mean()
+```
 Out[ ]:
+```python
 Type
 Barley       8.550000
 Blend        8.312712
@@ -312,9 +358,14 @@ Rye          8.645696
 Wheat        8.500000
 Whiskey      8.310000
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 whisky_df['Meta Critic'].describe()
+```
 Out[ ]:
+```python
 count    1716.000000
 mean        8.552331
 std         0.396664
@@ -324,31 +375,48 @@ min         6.470000
 75%         8.830000
 max         9.540000
 Name: Meta Critic, dtype: float64
+```
+
 In [ ]:
+```python
 # Let's see what a scatterplot of the two looks like
 plt.scatter(whisky_df["Country Condensed"], whisky_df['Meta Critic']);
+```
 
 In [ ]:
+```python
 # Scatter is too difficult to determine anything specific. Boxplot might be better
 whisky_df.boxplot(column='Meta Critic', by='Country Condensed');
+```
 
 In [ ]:
+```python
 # Again, with different variables
 whisky_df.boxplot(column="Meta Critic", by='Cost Rank');
+```
 
 In [ ]:
+```python
 whisky_df.boxplot(column='Meta Critic', by='Cluster');
+```
 
 In [ ]:
+```python
 whisky_df.boxplot(column='Meta Critic', by='Class');
+```
 
 In [ ]:
+```python
 whisky_df.boxplot(column='Meta Critic', by='Type');
+```
 
 In [ ]:
+```python
 # Are their any useful comparisons not utilizing 'Meta Critic'?
 pd.crosstab(whisky_df['Cluster'], whisky_df['Type'])
+```
 Out[ ]:
+```python
 Type	Barley	Blend	Bourbon	Flavoured	Grain	Malt	Rye	Wheat	Whiskey
 Cluster									
 A	0	0	0	0	0	99	0	0	0
@@ -366,16 +434,23 @@ R2	0	0	67	0	0	0	0	0	0
 R3	0	0	46	0	0	0	0	0	0
 R4	0	2	0	0	0	0	58	0	0
 U	1	271	1	1	5	1	21	1	0
+```
+
 In [ ]:
+```python
 # What does this look like as a stacked bar chart?
 flavor_type = pd.crosstab(whisky_df['Cluster'], whisky_df['Type'])
 flavor_type.plot(kind='barh', stacked=True);
+```
 
 In [ ]:
+```python
 # This next one is not really useful information because it is literally 
 # defined by the Cluster code definitions already
 pd.crosstab(whisky_df['Cluster'], whisky_df['Class'])
+```
 Out[ ]:
+```python
 Class	Bourbon-like	Rye-like	Scotch-like	SingleMalt-like
 Cluster				
 A	0	0	0	99
@@ -393,10 +468,15 @@ R2	67	0	0	0
 R3	46	0	0	0
 R4	0	60	0	0
 U	12	155	135	0
+```
+
 In [ ]:
+```python
 # Similar to previous, but more useful
 pd.crosstab(whisky_df['Type'], whisky_df['Class'])
+```
 Out[ ]:
+```python
 Class	Bourbon-like	Rye-like	Scotch-like	SingleMalt-like
 Type				
 Barley	0	1	0	0
@@ -408,15 +488,22 @@ Malt	0	0	1	1125
 Rye	0	79	0	0
 Wheat	1	1	0	0
 Whiskey	1	0	0	0
+```
+
 In [ ]:
+```python
 # Lets see this as a stacked bar too
 # The Malt value skews the graph and makes it hard to read 
 type_class = pd.crosstab(whisky_df['Type'], whisky_df['Class'])
 type_class.plot(kind='barh', stacked=True);
+```
 
 In [ ]:
+```python
 pd.crosstab(whisky_df['Cluster'], whisky_df['Country Condensed'])
+```
 Out[ ]:
+```python
 Country Condensed	Canada	Ireland	Japan	Other	Scotland	USA
 Cluster						
 A	0	1	2	7	89	0
@@ -434,17 +521,21 @@ R2	0	0	0	0	0	67
 R3	0	0	0	0	0	46
 R4	0	0	0	0	0	60
 U	153	36	14	7	77	15
+```
+
 In [ ]:
+```python
 type_class = pd.crosstab(whisky_df['Country Condensed'], whisky_df['Cluster'])
 type_class.plot(kind='barh', stacked=True);
+```
 
-Final Notes
+# Final Notes
 What I want to do better
 I wanted to try looking at correlation heat maps utilizing dython, but I ran out of time.
 
 I wasn't able to clean up the visualizations as much as I would like.
 
-Takeaways
+## Takeaways
 Scotch Single Malts seem to be the preffered type of whisky for the data gatherer. This meant the results were weighted towards these categories.
 
 Country of Origin has little effect on the overall score of a whisky.
