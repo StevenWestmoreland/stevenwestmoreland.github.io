@@ -4,7 +4,7 @@ title: Scotch Satisfaction Predictions
 subtitle: Insights into good Scotches
 gh-repo: daattali/beautiful-jekyll
 gh-badge: [star, fork, follow]
-tags: [school project, whisky, EDA]
+tags: [school project, whisky, EDA, random forest, logistic regression, visualizations]
 comments: true
 ---
 
@@ -557,6 +557,13 @@ Weight	Feature
 0.0344 ± 0.0233	age
 0.0071 ± 0.0264	category
 ```
+
+| **Weight** | **Feature** |
+| --- | --- |
+| 0.0623 ± 0.0168 | price |
+| 0.0552 ± 0.0245 | alcohol_by_volume |
+| 0.0344 ± 0.0233 | age |
+| 0.0071 ± 0.0264 | category |
 
 # Logistic Regression
 My linear model utilizes Logistic Regression to predict the satisfaction rating of the test observations. Unlinke my later models, I needed to split the training data into training and validation datasets. I chose to split these randomly at 80%/20% train/validation.
