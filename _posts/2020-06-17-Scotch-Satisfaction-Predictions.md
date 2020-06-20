@@ -30,19 +30,19 @@ For the models themselves, I will be evaluating their performance on Accuracy, P
 
 # Exploratory Analysis
 In [1]:
-`# Imports and first dataset reading. Cleaned Index column and renamed column `
-`# 'review.point' to avoid any unnecessary issues with dot-notation.`
-`import pandas as pd`
-`import numpy as np`
-`import matplotlib.pyplot as plt`
+`# Imports and first dataset reading. Cleaned Index column and renamed column `  
+`# 'review.point' to avoid any unnecessary issues with dot-notation.`  
+`import pandas as pd`  
+`import numpy as np`  
+`import matplotlib.pyplot as plt`  
 `import seaborn as sns`
 
-`!pip install eli5`
-`!pip install category_encoders==2.*`
+`!pip install eli5`  
+`!pip install category_encoders==2.*`  
 `!pip install pdpbox`
 
-`import warnings
-warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')`
+`import warnings`  
+`warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')`
 
 In [2]:
 scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
