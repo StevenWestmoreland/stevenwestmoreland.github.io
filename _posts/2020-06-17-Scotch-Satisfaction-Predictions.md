@@ -265,22 +265,26 @@ In [25]:
 ```python
 sns.pairplot(scotch_1000);
 ```
+![](https://i.imgur.com/4HGIUi5.png "EDA Pairplot 2")
 
 In [26]:  
 ```python
 satisfaction_type = pd.crosstab(scotch_1000['category'], scotch_1000['satisfaction_rating'])
 satisfaction_type.plot(kind='barh', stacked=True);
 ```
+![](https://i.imgur.com/GLEEf1J.png "scotch_1000 BarH")
 
 In [27]:  
 ```python
 scotch_1000.boxplot(column='price', by='category', rot=45, figsize=(10,8));
 ```
+![](https://i.imgur.com/EmiDMvv.png "scotch_1000 Boxplot 1")
 
 In [28]:  
 ```python
 scotch_1000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));
 ```
+![](https://i.imgur.com/71T32Zj.png "scotch_1000 Boxplot 2")
 
 I noticed here that the first four boxes are similar, but Single Malt Scotch seems to have a disproportionately high number of outliers. Generally speaking, when people think of scotch they think of single malts. Perhaps there is just a disproportionately larger amount of these in our dataset to begin with? Looking at the original dataset, I got the following results:
 
@@ -338,16 +342,19 @@ In [32]:
 satisfaction_type = pd.crosstab(scotch_5000['category'], scotch_5000['satisfaction_rating'])
 satisfaction_type.plot(kind='barh', stacked=True);
 ```
+![](https://i.imgur.com/gKDXXdB.png "scotch_5000 BarH")
 
 In [33]:  
 ```python
 scotch_5000.boxplot(column='price', by='category', rot=45, figsize=(10,8));
 ```
+![](https://i.imgur.com/U6Y4E7H.png "scotch_5000 Boxplot 1")
 
 In [34]:  
 ```python
 scotch_5000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));
 ```
+![](https://i.imgur.com/MgyZDLf.png "scotch_5000 Boxplot 2")
 
 The first and third visualizations did not change by much, but we can see how much the outliers affect the price to category box-plot comparison.
 
@@ -603,6 +610,7 @@ from sklearn.metrics import plot_confusion_matrix
 plot_confusion_matrix(LR_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
 ```
+![](https://i.imgur.com/Cqq5Qax.png "Logistic Regression Confusion Matrix")
 
 In [49]:
 ```python
@@ -697,6 +705,7 @@ In [54]:
 plot_confusion_matrix(CV_best_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
 ```
+![](https://i.imgur.com/pmDJtHf.png "Random Forest with Cross Validation Confusion Matrix")
 
 In [55]:
 ```python
@@ -730,6 +739,7 @@ plt.figure(figsize=(10,n/2))
 plt.title(f'Top {n} features')
 importances.sort_values()[-n:].plot.barh(color='grey');
 ```
+![](https://i.imgur.com/au38ifp.png "Feature Importances")
 
 ---
 
@@ -781,6 +791,7 @@ In [60]:
 plot_confusion_matrix(RF_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
 ```
+![](https://i.imgur.com/oG8IyOh.png "Random Forest with Validation Split Confusion Matrix")
 
 In [61]:
 ```python
@@ -829,6 +840,7 @@ In [95]:
 pdp_interact_plot(interact, plot_type='grid', feature_names=features);
 findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
 ```
+![](https://i.imgur.com/chE9HpB.png "Two-feature PDP")
 
 In [107]:
 ```python
@@ -843,6 +855,7 @@ isolated = pdp_isolate(
 
 pdp_plot(isolated, feature_name=feature, plot_lines=True);
 ```
+![](https://i.imgur.com/IHhWxCA.png "Price PDP")
 
 In [108]:
 ```python
@@ -857,6 +870,7 @@ isolated = pdp_isolate(
 
 pdp_plot(isolated, feature_name=feature, plot_lines=True);
 ```
+![](https://i.imgur.com/lZSw86s.png "Alcohol by Volume PDP")
 
 ---
 
