@@ -50,8 +50,8 @@ warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')
 
 In [2]:  
 ``` python
-scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
-scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})
+scotch_df = pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
+scotch_df = scotch_df.rename(columns={'review.point': 'review_point'})
 ```
 
 In [3]:  
@@ -136,8 +136,10 @@ Even though the ratings theoretically are from 0 to 100, there is actually a ran
 In [6]:  
 ``` python
 scotch_df.loc[scotch_df['review_point'] >= 90, 'satisfaction_rating'] = 'Excellent'
-scotch_df.loc[(scotch_df['review_point'] >= 87) & (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'
-scotch_df.loc[(scotch_df['review_point'] >= 84) & (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair'
+scotch_df.loc[(scotch_df['review_point'] >= 87) & 
+                  (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'
+scotch_df.loc[(scotch_df['review_point'] >= 84) & 
+                   (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair'
 scotch_df.loc[scotch_df['review_point'] < 84, 'satisfaction_rating'] = 'Poor'
 ```
 
@@ -212,7 +214,7 @@ I found two additional instances of similar entries, so I cleaned those while I 
 
 In [11]:  
 ```python
-scotch_df['price']=scotch_df['price'].astype(float)
+scotch_df['price'] = scotch_df['price'].astype(float)
 ```
 
 ## EDA Visualizations
@@ -232,8 +234,8 @@ Instead, I opted to try out two different model sets, one that cuts outliers wit
 
 In [13]:  
 ```python
-scotch_1000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 1000.000000].index)
-scotch_5000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 5000.000000].index)
+scotch_1000 = scotch_df.drop(scotch_df.loc[scotch_df['price'] > 1000.000000].index)
+scotch_5000 = scotch_df.drop(scotch_df.loc[scotch_df['price'] > 5000.000000].index)
 ```
 
 ### EDA Visualizations for Scotch_1000
@@ -393,15 +395,15 @@ def wrangle(X):
   
   # Currency is the same value for every entry, giving us no actionable information.
   # Drop review_point to prevent data leakage with the satisfaction_rating feature
-  X=X.drop(columns=['currency', 'review_point'])
+  X = X.drop(columns=['currency', 'review_point'])
   
   # Extract the ABV from the name feature and put it into a new feature
-  X['alcohol_by_volume']=X['name'].str.extract(pat = '([0-9][0-9.]+%)')
+  X['alcohol_by_volume'] = X['name'].str.extract(pat = '([0-9][0-9.]+%)')
   X['alcohol_by_volume'] = X['alcohol_by_volume'].str.strip('%').astype(float)
   
   # Extract from name feature if there is an age statement
-  X['age']=X['name'].str.extract(pat = '([0-9][0-9] year)')
-  X['age']=X['age'].fillna('No Age Statement')
+  X['age'] = X['name'].str.extract(pat = '([0-9][0-9] year)')
+  X['age'] = X['age'].fillna('No Age Statement')
   
   # Return wrangled dataframe
   return X
@@ -442,13 +444,13 @@ In [29]:
 # Arrange data into X feature matrix and y target vector
 X_train = train[features]
 X_test = test[features]
-y_train=train[target]
-y_test=test[target]
+y_train = train[target]
+y_test = test[target]
 
-X_trainLR=trainLR[features]
-X_val=val[features]
-y_trainLR=trainLR[target]
-y_val=val[target]
+X_trainLR = trainLR[features]
+X_val = val[features]
+y_trainLR = trainLR[target]
+y_val = val[target]
 ```
 
 In [30]:
@@ -564,9 +566,11 @@ LR_pipe.fit(X_trainLR, y_trainLR)
 print(f'Train accuracy: {LR_pipe.score(X_trainLR, y_trainLR)}')
 print(f'Validation accuracy: {LR_pipe.score(X_val, y_val)}')
 ```
-Out [34]:  
+Out [34]:
+```python
 Train accuracy: 0.3879821958456973
 Validation accuracy: 0.31750741839762614
+```
 
 ## Logistic Regression Evaluation
 In [35]:
@@ -577,7 +581,9 @@ y_pred_LR = LR_pipe.predict(X_test)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_LR)}')
 ```
 Out [35]:  
+```python
 Prediction accuracy: 0.3033175355450237
+```
 
 In [36]:
 ```python
@@ -670,11 +676,13 @@ y_pred_RF = CV_best_pipe.predict(X_test)
 print(f'Validation accuracy for {k} folds:', scores)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_RF)}')
 ```
-Out [40]:  
+Out [40]: 
+```python
 Validation accuracy for 18 folds: [0.25531915 0.30851064 0.36170213 0.30851064 0.32978723 0.39361702
  0.34042553 0.38297872 0.38297872 0.38297872 0.34042553 0.31182796
  0.30107527 0.3655914  0.2688172  0.34408602 0.35483871 0.32258065]
 Prediction accuracy: 0.3459715639810427
+```
 
 In [41]:
 ```python
@@ -735,9 +743,11 @@ RF_pipe.fit(X_trainLR, y_trainLR)
 print(f'Train accuracy: {RF_pipe.score(X_trainLR, y_trainLR)}')
 print(f'Validation accuracy: {RF_pipe.score(X_val, y_val)}')
 ```
-Out [44]:  
+Out [44]: 
+```python
 Train accuracy: 0.913946587537092
 Validation accuracy: 0.32344213649851633
+```
 
 In [45]:
 ```python
@@ -751,7 +761,9 @@ RF_pipe.fit(X_train, y_train)
 print(f'Train (full dataset) accuracy: {RF_pipe.score(X_train, y_train)}')
 ```
 Out [45]:  
+```python
 Train (full dataset) accuracy: 0.9014836795252226
+```
 
 ## Random Forest Train/Val Split Evaluation
 In [46]:
@@ -760,7 +772,9 @@ y_pred_RFSplit = RF_pipe.predict(X_test)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_RFSplit)}')
 ```
 Out [46]:  
+```python
 Prediction accuracy: 0.3175355450236967
+```
 
 In [47]:
 ```python
@@ -796,7 +810,7 @@ from pdpbox.pdp import pdp_interact, pdp_interact_plot, pdp_isolate, pdp_plot
 ```
 In [50]:
 ```python
-X_test=X_test.fillna(method='ffill')
+X_test = X_test.fillna(method='ffill')
 ```
 
 In [51]:
