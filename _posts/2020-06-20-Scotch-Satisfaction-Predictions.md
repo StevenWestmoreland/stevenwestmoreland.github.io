@@ -541,6 +541,7 @@ feature_names = X_val.columns.tolist()
 eli5.show_weights(permuter, top=None, feature_names=feature_names)
 ```
 Out[33]:  
+
 | **Weight** | **Feature** |
 | --- | --- |
 | 0.0623 ± 0.0168 | price |
