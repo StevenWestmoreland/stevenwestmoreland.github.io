@@ -203,7 +203,7 @@ I found two additional instances of similar entries, so I cleaned those while I 
 In [0]:  
 `scotch_df['price']=scotch_df['price'].astype(float)`
 
-##EDA Visualizations
+## EDA Visualizations
 Ok, so let's take a look at a few comparisions between the features.
 
 In [23]:  
@@ -219,7 +219,7 @@ In [0]:
 `scotch_1000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 1000.000000].index)`  
 `scotch_5000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 5000.000000].index)`
 
-###EDA Visualizations for Scotch_1000
+### EDA Visualizations for Scotch_1000
 In [25]:  
 `sns.pairplot(scotch_1000);`
 
@@ -269,7 +269,7 @@ Out[31]:
 `Grain Scotch Whisky             28`  
 `Name: category, dtype: int64`
 
-###EDA Visualizations for Scotch_5000
+### EDA Visualizations for Scotch_5000
 I was curious to see how these same visualizations might change due to the raised cutoff for outlier values.
 
 In [32]:   
@@ -284,7 +284,7 @@ In [34]:
 
 The first and third visualizations did not change by much, but we can see how much the outliers affect the price to category box-plot comparison.
 
-#Train/Val/Test Split
+# Train/Val/Test Split
 *Note: here on out I will be primarily using the created scotch_1000 dataset, except where otherwise noted.*
 
 In [35]:  
@@ -316,7 +316,7 @@ In [0]:
 `# cross validation`  
 `trainLR, val = train_test_split(train, train_size=0.80, test_size=0.20, stratify=train['satisfaction_rating'], random_state=55)`
 
-##Feature Engineering
+## Feature Engineering
 Two common characteristics of whiskies that are often sought are the alcohol by volume, or ABV, and whether or not the whisky has an age statement. Neither of these two are represented by a feature on their own, but rather are included in the name feature of the original dataset.
 
 I extracted both of these characteristics and put them into thier own features. While ABV is required by law to be on the label (and is therefore included in each entry), age statements are not. Furthermore, not all whiskies have an identifiable age to state. In the cases where age statement was missing, I gave it a value of "No Age Statement".
