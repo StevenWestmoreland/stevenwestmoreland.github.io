@@ -57,7 +57,7 @@ name	category	review_point	price	currency	description
 In [3]:  
 `# check for null values`  
 `scotch_df.isnull().sum()`  
-Out[3]:
+Out[3]:  
 `name            0`  
 `category        0`  
 `review_point    0`  
@@ -66,7 +66,7 @@ Out[3]:
 `description     0`  
 `dtype: int64`
 
-Since we are looking at predicting how well a scotch might be recieved, I initially pegged the 'review_point' column as my target variable.
+Since we are looking at predicting how well a scotch might be recieved, I initially pegged the `review_point` column as my target variable.
 
 In [4]:  
 `scotch_df['review_point'].value_counts(normalize=True)`  
@@ -117,18 +117,18 @@ Out[5]:
 
 As you can see, we've a bunch of possible outcomes and not enough features to make good predictions from. At 29 posible outcomes, and only seven features, it just isn't feasible. At least, not with any significant accuracy.
 
-Instead, I opted to combined multiple scores into one of four categories: Poor, Fair, Good, or Excellent. This moved my model from one of regression to classification.
+Instead, I opted to combined multiple scores into one of four categories: **Poor**, **Fair**, **Good**, or **Excellent**. This moved my model from one of regression to classification.
 
 Even though the ratings theoretically are from 0 to 100, there is actually a range from 63 to 97. Therefore, I decided to bin each category at the 25%, 50%, 75%, and max scores.
 
-In [6]:
-scotch_df.loc[scotch_df['review_point'] >= 90, 'satisfaction_rating'] = 'Excellent'
-scotch_df.loc[(scotch_df['review_point'] >= 87) & (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'
-scotch_df.loc[(scotch_df['review_point'] >= 84) & (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair' 
-scotch_df.loc[scotch_df['review_point'] < 84, 'satisfaction_rating'] = 'Poor' 
+In [6]:  
+`scotch_df.loc[scotch_df['review_point'] >= 90, 'satisfaction_rating'] = 'Excellent'`  
+`scotch_df.loc[(scotch_df['review_point'] >= 87) & (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'`  
+`scotch_df.loc[(scotch_df['review_point'] >= 84) & (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair'`   
+`scotch_df.loc[scotch_df['review_point'] < 84, 'satisfaction_rating'] = 'Poor'`
 
-scotch_df.sample(7)
-Out[6]:
+`scotch_df.sample(7)`  
+Out[6]:  
 name	category	review_point	price	currency	description	satisfaction_rating
 418	Blair Athol 23 year old (Diageo Special Releas...	Single Malt Scotch	90	460	$	This Perthshire single malt was distilled in 1...	Excellent
 495	Adelphi (distilled at Macallan) 14 year old 19...	Single Malt Scotch	90	117.00	$&lt;/td&gt;
@@ -144,240 +144,221 @@ name	category	review_point	price	currency	description	satisfaction_rating
       &lt;td&gt;$	The 8th in a series of “Links” releases. This ...	Poor
 1584	Sir Edward’s Smoky, 40%	Blended Scotch Whisky	85	22	$</td> <td>This blend delivers just enough peat turf to l...</td> <td>Fair</td> </tr> <tr> <th>492</th> <td>The Macallan 1861 Replica, 42.7%</td> <td>Single Malt Scotch</td> <td>90</td> <td>180.00</td> <td>$	Antique amber color. Aromas of toffee and malt...	Excellent
 2156	Douglas Laing Premier Barrel (distilled at Gle...	Single Malt Scotch	80	95	$</td> <td>Another youthful offering from Douglas Laing i...</td> <td>Poor</td> </tr> <tr> <th>2095</th> <td>The BenRiach 12 year old, 46%</td> <td>Single Malt Scotch</td> <td>80</td> <td>63.00</td> <td>$	Clean, fresh and uncomplicated. Honeyed malt, ...	Poor
-In [7]:
-# get normalized value_counts() to determine majority class
-scotch_df['satisfaction_rating'].value_counts(normalize=True)
-Out[7]:
-Good         0.276814
-Fair         0.262127
-Excellent    0.254117
-Poor         0.206943
-Name: satisfaction_rating, dtype: float64
-This gave me a fairly even distribution of classes. The majority class here is Good at 27.68% accuracy, much better than the 9.83% accuracy if I had tried to predict the score itself.
 
-This does, however, present an opportunity for data leakage. If I were to fit with the review_point feature still in the dataframe, the model will have an artificial 100% accuracy. You will see that I handle this later in the wrangle function, where I exclude this feature from the fitting.
+In [7]:  
+`# get normalized value_counts() to determine majority class`  
+`scotch_df['satisfaction_rating'].value_counts(normalize=True)`  
+Out[7]:  
+`Good         0.276814`  
+`Fair         0.262127`  
+`Excellent    0.254117`  
+`Poor         0.206943`  
+`Name: satisfaction_rating, dtype: float64`
 
-Another potentially problematic feature is the currency feature. If the entire dataset has price recorded in USD, then I can ignore the feature because it has nothing substantial to give. If, instead, it happens to have multiple types of currency, I'd need to consider encoding techniques.
+This gave me a fairly even distribution of classes. The majority class here is **Good** at 27.68% accuracy, much better than the 9.83% accuracy if I had tried to predict the score itself.
 
-In [8]:
-# make sure currency doesn't have multiple types, otherwise will need encoding
-scotch_df['currency'].value_counts()
-Out[8]:
-$    2247
-Name: currency, dtype: int64
-Since everything is recorded in USD, I will need to also drop this feature within the wrangle function.
+This does, however, present an opportunity for data leakage. If I were to fit with the `review_point` feature still in the dataframe, the model will have an artificial 100% accuracy. You will see that I handle this later in the wrangle function, where I exclude this feature from the fitting.
 
-Speaking of prices, I also wanted to take a look at that particular feature's range of recorded prices.
+Another potentially problematic feature is the currency feature. If the entire dataset has `price` recorded in USD, then I can ignore the feature because it has nothing substantial to give. If, instead, it happens to have multiple types of currency, I'd need to consider encoding techniques.
 
-In [9]:
-scotch_df['price'].value_counts().sort_index()
-Out[9]:
-$15,000 or $60,000/set     1
-1,100                      3
-1,400                      1
-1,500.00                   1
-1,700                      1
-                          ..
-98.00                      3
-989                        1
-99                        11
-99.00                      2
-995.00                     1
-Name: price, Length: 632, dtype: int64
+In [8]:  
+`# make sure currency doesn't have multiple types, otherwise will need encoding`  
+`scotch_df['currency'].value_counts()`  
+Out[8]:  
+`$    2247`  
+`Name: currency, dtype: int64`
+
+Since everything is recorded in USD, I will need to also drop this feature within the wrangle function. Speaking of prices, I also wanted to take a look at that particular feature's range of recorded prices.
+
+In [9]:  
+`scotch_df['price'].value_counts().sort_index()`  
+Out[9]:  
+`$15,000 or $60,000/set     1`  
+`1,100                      3`  
+`1,400                      1`  
+`1,500.00                   1`  
+`1,700                      1`  
+`                          ..`  
+`98.00                      3`  
+`989                        1`  
+`99                        11`  
+`99.00                      2`  
+`995.00                     1`  
+`Name: price, Length: 632, dtype: int64`
+
 We can see here that price is recorded as a string, as indicative by not only a mixing of what appear to be integers and floats, but also from the entry at the top.
 
-'Price' would do better as a numerical feature, but in order to convert it I first needed to deal with the entry with the value "15,000 or $60,000/set". I'm not sure why exactly this entry has a value for purchasing it as a set, but since everything else is cost in USD per bottle that's the value I decided to keep.
+`Price` would do better as a numerical feature, but in order to convert it I first needed to deal with the entry with the value "15,000 or $60,000/set". I'm not sure why exactly this entry has a value for purchasing it as a set, but since everything else is cost in USD per bottle that's the value I decided to keep.
 
-In [0]:
-#df=scotch_df.copy()
-In [0]:
-#df = df.replace({"60000/set":'60000',"$15,000 or $60,000/set":'15000',"44/liter":'44'})
+In [0]:  
+`# prep price entries to be converted to floats`  
+`scotch_df = scotch_df.replace(to_replace ="$15,000 or $60,000/set", value ="15000")`  
+`scotch_df = scotch_df.replace(to_replace ="60000/set", value ="60000")`  
+`scotch_df = scotch_df.replace(to_replace ="60000/set", value ="60000")`  
+`scotch_df = scotch_df.replace(to_replace ="44/liter", value ="44")`  
+`scotch_df['price']=scotch_df['price'].str.replace(",","")`
 
-#df.price = df.price.str.replace(",","")
-In [0]:
-#df.price.value_counts()
-In [0]:
-#def clean(text):
-  #text = text.str.replace({"60000/set":'60000', "$15,000 or $60,000/set":'15000', "44/liter":'44'})
-  #text = text.str.replace(",","")
-  #return text
-In [0]:
-#df.price=df.price.apply(clean)
-In [0]:
-#df.price.astype(float)
-In [0]:
-#df[df.price=='60000/set']
-In [0]:
-# prep price entries to be converted to floats
-scotch_df = scotch_df.replace(to_replace ="$15,000 or $60,000/set", 
-                 value ="15000")
-scotch_df = scotch_df.replace(to_replace ="60000/set", 
-                              value ="60000")
-scotch_df = scotch_df.replace(to_replace ="60000/set", 
-                 value ="60000")
-scotch_df = scotch_df.replace(to_replace ="44/liter", 
-                 value ="44")
-scotch_df['price']=scotch_df['price'].str.replace(",","")
 I found two additional instances of similar entries, so I cleaned those while I was at it.
 
-In [0]:
-scotch_df['price']=scotch_df['price'].astype(float)
-EDA Visualizations
+In [0]:  
+`scotch_df['price']=scotch_df['price'].astype(float)`
+
+##EDA Visualizations
 Ok, so let's take a look at a few comparisions between the features.
 
-In [23]:
-sns.pairplot(scotch_df);
+In [23]:  
+`sns.pairplot(scotch_df);`
 
-There seems to be a number of outliers in price, which make these visualizations hard to read.
+There seems to be a number of outliers in `price`, which make these visualizations hard to read.
 
 I could altogether drop them, because these specific whiskies are unobtainable for the vast majorty of whisky drinkers anyway and therefore not useful for the intention of this project. But that seemed a significant number of entries to drop, well over 100.
 
 Instead, I opted to try out two different model sets, one that cuts outliers with a price of one thousand dollars or more, and another that raises the cutoff to five thousand.
 
-In [0]:
-scotch_1000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 1000.000000].index)
-scotch_5000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 5000.000000].index)
-EDA Visualizations for Scotch_1000
-In [25]:
-sns.pairplot(scotch_1000);
+In [0]:  
+`scotch_1000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 1000.000000].index)`  
+`scotch_5000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 5000.000000].index)`
 
-In [26]:
-satisfaction_type = pd.crosstab(scotch_1000['category'], scotch_1000['satisfaction_rating'])
-satisfaction_type.plot(kind='barh', stacked=True);
+###EDA Visualizations for Scotch_1000
+In [25]:  
+`sns.pairplot(scotch_1000);`
 
-In [27]:
-scotch_1000.boxplot(column='price', by='category', rot=45, figsize=(10,8));
+In [26]:  
+`satisfaction_type = pd.crosstab(scotch_1000['category'], scotch_1000['satisfaction_rating'])`  
+`satisfaction_type.plot(kind='barh', stacked=True);`  
 
-In [28]:
-scotch_1000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));
+In [27]:  
+`scotch_1000.boxplot(column='price', by='category', rot=45, figsize=(10,8));`  
+
+In [28]:  
+`scotch_1000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));`
 
 I noticed here that the first four boxes are similar, but Single Malt Scotch seems to have a disproportionately high number of outliers. Generally speaking, when people think of scotch they think of single malts. Perhaps there is just a disproportionately larger amount of these in our dataset to begin with? Looking at the original dataset, I got the following results:
 
-In [29]:
-scotch_df['category'].value_counts()
-Out[29]:
-Single Malt Scotch            1819
-Blended Scotch Whisky          211
-Blended Malt Scotch Whisky     132
-Single Grain Whisky             57
-Grain Scotch Whisky             28
-Name: category, dtype: int64
+In [29]:  
+`scotch_df['category'].value_counts()`  
+Out[29]:  
+`Single Malt Scotch            1819`  
+`Blended Scotch Whisky          211`  
+`Blended Malt Scotch Whisky     132`  
+`Single Grain Whisky             57`  
+`Grain Scotch Whisky             28`  
+`Name: category, dtype: int64`
+
 Single Malts are almost nine times as numerous as the next largest category, Blended Scotch. That probably accounts for it.
 
-In this case, I used the original scotch_df to see the distribution of categories, but I also wanted to see how it changed for scotch_1000 and scotch_5000. It looks like the majority of high-cost scotched were also Single Malts.
+In this case, I used the original scotch_df to see the distribution of categories, but I also wanted to see how it changed for scotch_1000 and scotch_5000. It looks like the majority of high-cost scotches were also Single Malts.
 
-In [30]:
-scotch_1000['category'].value_counts()
-Out[30]:
-Single Malt Scotch            1694
-Blended Scotch Whisky          201
-Blended Malt Scotch Whisky     130
-Single Grain Whisky             55
-Grain Scotch Whisky             27
-Name: category, dtype: int64
-In [31]:
-scotch_5000['category'].value_counts()
-Out[31]:
-Single Malt Scotch            1783
-Blended Scotch Whisky          210
-Blended Malt Scotch Whisky     132
-Single Grain Whisky             57
-Grain Scotch Whisky             28
-Name: category, dtype: int64
-EDA Visualizations for Scotch_5000
+In [30]:  
+`scotch_1000['category'].value_counts()`
+Out[30]:  
+`Single Malt Scotch            1694`  
+`Blended Scotch Whisky          201`  
+`Blended Malt Scotch Whisky     130`  
+`Single Grain Whisky             55`  
+`Grain Scotch Whisky             27`  
+`Name: category, dtype: int64`
+
+In [31]:  
+`scotch_5000['category'].value_counts()`  
+Out[31]:  
+`Single Malt Scotch            1783`  
+`Blended Scotch Whisky          210`  
+`Blended Malt Scotch Whisky     132`  
+`Single Grain Whisky             57`  
+`Grain Scotch Whisky             28`  
+`Name: category, dtype: int64`
+
+###EDA Visualizations for Scotch_5000
 I was curious to see how these same visualizations might change due to the raised cutoff for outlier values.
 
-In [32]:
-satisfaction_type = pd.crosstab(scotch_5000['category'], scotch_5000['satisfaction_rating'])
-satisfaction_type.plot(kind='barh', stacked=True);
+In [32]:   
+`satisfaction_type = pd.crosstab(scotch_5000['category'], scotch_5000['satisfaction_rating'])`  
+`satisfaction_type.plot(kind='barh', stacked=True);`
 
-In [33]:
-scotch_5000.boxplot(column='price', by='category', rot=45, figsize=(10,8));
+In [33]:  
+`scotch_5000.boxplot(column='price', by='category', rot=45, figsize=(10,8));`
 
-In [34]:
-scotch_5000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));
+In [34]:  
+`scotch_5000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));`
 
 The first and third visualizations did not change by much, but we can see how much the outliers affect the price to category box-plot comparison.
 
-Train/Val/Test Split
-Note: here on out I will be primarily using the created scotch_1000 dataset, except where otherwise noted.
+#Train/Val/Test Split
+*Note: here on out I will be primarily using the created scotch_1000 dataset, except where otherwise noted.*
 
-In [35]:
-from sklearn.model_selection import train_test_split
+In [35]:  
+`from sklearn.model_selection import train_test_split`
 
-train, test = train_test_split(scotch_1000, train_size=0.80, test_size=0.20, stratify=scotch_1000['satisfaction_rating'], random_state=55)
+`train, test = train_test_split(scotch_1000, train_size=0.80, test_size=0.20, stratify=scotch_1000['satisfaction_rating'], random_state=55)`
 
-train.shape, test.shape
-Out[35]:
-((1685, 7), (422, 7))
+`train.shape, test.shape`  
+Out[35]:  
+`((1685, 7), (422, 7))`
+
 Here, I opted to split the data into just training and test datasets. I will be using cross validation in my pipeline, which will provide my validation data.
 
-In [36]:
-train['satisfaction_rating'].value_counts(normalize=True)
-Out[36]:
-Good         0.282493
-Fair         0.271810
-Excellent    0.228487
-Poor         0.217211
-Name: satisfaction_rating, dtype: float64
-The satisfaction rating value_counts (normalized) are similar to what was represented by the original dataset. There is some difference, which is to be expected, but it is marginally skewed towards more Good, Fair, and Poor ratings and less Excellent ratings.
+In [36]:  
+`train['satisfaction_rating'].value_counts(normalize=True)`  
+Out[36]:  
+`Good         0.282493`  
+`Fair         0.271810`  
+`Excellent    0.228487`  
+`Poor         0.217211`  
+`Name: satisfaction_rating, dtype: float64`
+
+The satisfaction rating value_counts (normalized) are similar to what was represented by the original dataset. There is some difference, which is to be expected, but it is marginally skewed towards more **Good**, **Fair**, and **Poor** ratings and less **Excellent** ratings.
 
 If we were to look at our training dataset alone, our majority class does not change it's class, but it does increase to 28.25%.
 
-In [0]:
-# train/val split for use with Logistic Regression and Random Forest without
-# cross validation
-trainLR, val = train_test_split(train, train_size=0.80, test_size=0.20, stratify=train['satisfaction_rating'], random_state=55)
-Feature Engineering
-Two common characteristics of whiskies that are often sought are the alcohol by volume, or ABV, and whether or not the whisky has an age statement. Neither of these two are represented by a feature on their own, but are rather included in the name feature of the original dataset.
+In [0]:  
+`# train/val split for use with Logistic Regression and Random Forest without`  
+`# cross validation`  
+`trainLR, val = train_test_split(train, train_size=0.80, test_size=0.20, stratify=train['satisfaction_rating'], random_state=55)`
+
+##Feature Engineering
+Two common characteristics of whiskies that are often sought are the alcohol by volume, or ABV, and whether or not the whisky has an age statement. Neither of these two are represented by a feature on their own, but rather are included in the name feature of the original dataset.
 
 I extracted both of these characteristics and put them into thier own features. While ABV is required by law to be on the label (and is therefore included in each entry), age statements are not. Furthermore, not all whiskies have an identifiable age to state. In the cases where age statement was missing, I gave it a value of "No Age Statement".
 
-In [0]:
-def wrangle(X):
-  ''' Wrangle train and test sets in the same way'''
+In [0]:  
+`def wrangle(X):`  
+`  ''' Wrangle train and test sets in the same way'''`  
+`  # Prevent SettingWithCopyWarning`  
+`  X = X.copy()`  
+`  # Currency is the same value for every entry, giving us no actionable information.`  
+`  # Drop review_point to prevent data leakage with the satisfaction_rating feature`  
+`  X=X.drop(columns=['currency', 'review_point'])`  
+`  # Extract the ABV from the name feature and put it into a new feature`  
+`  X['alcohol_by_volume']=X['name'].str.extract(pat = '([0-9][0-9.]+%)')`  
+`  X['alcohol_by_volume'] = X['alcohol_by_volume'].str.strip('%').astype(float)`  
+`  # Extract from name feature if there is an age statement`  
+`  X['age']=X['name'].str.extract(pat = '([0-9][0-9] year)')`  
+`  X['age']=X['age'].fillna('No Age Statement')`  
+`  # Return wrangled dataframe`  
+`  return X`  
+`train = wrangle(train)`  
+`test = wrangle(test)`  
+`trainLR = wrangle(trainLR)`  
+`val = wrangle(val)`
 
-  # Prevent SettingWithCopyWarning
-  X = X.copy()
+In [39]:  
+`# The target is the satisfaction_rating feature`  
+`target = 'satisfaction_rating'`  
+`# Get a dataframe with all train features except target`  
+`train_features = train.drop(columns=[target])`  
+`# Get a list of numeric features`  
+`numeric_features = train_features.select_dtypes(include='number').columns.tolist()`  
+`# Get a series with the cardinality of nonnumeric features, then a list of all`  
+`# with a cardinality <=225`  
+`cardinality = train_features.select_dtypes(exclude='number').nunique()`  
+`categorical_features = cardinality[cardinality<=225].index.tolist()`  
+`# Combine lists`  
+`features = numeric_features + categorical_features` 
+`print(features)`  
+Out [39]  
+`['price', 'alcohol_by_volume', 'category', 'age']`
 
-  # Currency is the same value for every entry, giving us no actionable information.
-  # Drop review_point to prevent data leakage with the satisfaction_rating feature
-  X=X.drop(columns=['currency', 'review_point'])
-
-  # Extract the ABV from the name feature and put it into a new feature
-  X['alcohol_by_volume']=X['name'].str.extract(pat = '([0-9][0-9.]+%)')
-  X['alcohol_by_volume'] = X['alcohol_by_volume'].str.strip('%').astype(float)
-
-  # Extract from name feature if there is an age statement
-  X['age']=X['name'].str.extract(pat = '([0-9][0-9] year)')
-  X['age']=X['age'].fillna('No Age Statement')
-
-  # Return wrangled dataframe
-  return X
-
-train = wrangle(train)
-test = wrangle(test)
-trainLR = wrangle(trainLR)
-val = wrangle(val)
-In [39]:
-# The target is the satisfaction_rating feature
-target = 'satisfaction_rating'
-
-# Get a dataframe with all train features except target
-train_features = train.drop(columns=[target])
-
-# Get a list of numeric features
-numeric_features = train_features.select_dtypes(include='number').columns.tolist()
-
-# Get a series with the cardinality of nonnumeric features, then a list of all
-# with a cardinality <=225
-cardinality = train_features.select_dtypes(exclude='number').nunique()
-categorical_features = cardinality[cardinality<=225].index.tolist()
-
-# Combine lists
-features = numeric_features + categorical_features
-print(features)
-['price', 'alcohol_by_volume', 'category', 'age']
 In [0]:
 # Arrange data into X feature matrix and y target vector
 X_train = train[features]
@@ -389,10 +370,12 @@ X_trainLR=trainLR[features]
 X_val=val[features]
 y_trainLR=trainLR[target]
 y_val=val[target]
+
 In [41]:
 X_train.shape
 Out[41]:
 (1685, 4)
+
 Permutation Importance
 Even though I only have four features, I decided to run a Permutation Importance as a just-in-case sort of thing.
 
