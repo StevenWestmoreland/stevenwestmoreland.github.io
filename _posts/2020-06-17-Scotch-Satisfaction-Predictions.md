@@ -671,21 +671,31 @@ search.fit(X_train, y_train);
 
 ## Random Forest with CV Evaluation
 In [53]:
+```python
 CV_best_pipe = search.best_estimator_
 
 y_pred_RF = CV_best_pipe.predict(X_test)
 print(f'Validation accuracy for {k} folds:', scores)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_RF)}')
+```
+Out [53]:  
 Validation accuracy for 18 folds: [0.25531915 0.30851064 0.36170213 0.30851064 0.32978723 0.39361702
  0.34042553 0.38297872 0.38297872 0.38297872 0.34042553 0.31182796
  0.30107527 0.3655914  0.2688172  0.34408602 0.35483871 0.32258065]
 Prediction accuracy: 0.3459715639810427
+
 In [54]:
+```python
 plot_confusion_matrix(CV_best_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
+```
 
 In [55]:
+```python
 print(classification_report (y_test, y_pred_RF))
+```
+Out [55]:  
+```python
               precision    recall  f1-score   support
 
    Excellent       0.45      0.45      0.45        97
@@ -696,8 +706,10 @@ print(classification_report (y_test, y_pred_RF))
     accuracy                           0.35       422
    macro avg       0.35      0.34      0.34       422
 weighted avg       0.35      0.35      0.34       422
+```
 
 In [56]:
+```python
 # Get feature importances
 rf = CV_best_pipe.named_steps['randomforestclassifier']
 importances = pd.Series(rf.feature_importances_, X_train.columns)
@@ -709,12 +721,14 @@ n = 20
 plt.figure(figsize=(10,n/2))
 plt.title(f'Top {n} features')
 importances.sort_values()[-n:].plot.barh(color='grey');
+```
 
-Random Forest Classification using Train/Val split
+# Random Forest Classification using Train/Val split
 I was curious to see if the Cross Validation performed better than my own Train/Val split, so I also ran the model this way.
 
-Model Pipeline: Random Forest Train/Val Split
+# Model Pipeline: Random Forest Train/Val Split
 In [57]:
+```python
 # first, run the pipeline on the train/val split
 RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
                         SimpleImputer(),
@@ -724,9 +738,13 @@ RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
 RF_pipe.fit(X_trainLR, y_trainLR)
 print(f'Train accuracy: {RF_pipe.score(X_trainLR, y_trainLR)}')
 print(f'Validation accuracy: {RF_pipe.score(X_val, y_val)}')
+```
+Out [57]:  
 Train accuracy: 0.913946587537092
 Validation accuracy: 0.32344213649851633
+
 In [58]:
+```python
 # then fit it back to the full training data set
 RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
                         SimpleImputer(),
@@ -735,18 +753,31 @@ RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
 
 RF_pipe.fit(X_train, y_train)
 print(f'Train (full dataset) accuracy: {RF_pipe.score(X_train, y_train)}')
+```
+Out [58]:  
 Train (full dataset) accuracy: 0.9014836795252226
-Random Forest Train/Val Split Evaluation
+
+## Random Forest Train/Val Split Evaluation
 In [59]:
+```python
 y_pred_RFSplit = RF_pipe.predict(X_test)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_RFSplit)}')
+```
+Out [59]:  
 Prediction accuracy: 0.3175355450236967
+
 In [60]:
+```python
 plot_confusion_matrix(RF_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
+```
 
 In [61]:
+```python
 print(classification_report(y_test, y_pred_RFSplit))
+```
+Out [61]:  
+```python
               precision    recall  f1-score   support
 
    Excellent       0.38      0.39      0.39        97
@@ -757,115 +788,20 @@ print(classification_report(y_test, y_pred_RFSplit))
     accuracy                           0.32       422
    macro avg       0.32      0.32      0.32       422
 weighted avg       0.32      0.32      0.32       422
+```
 
-XGBoost Classifier
-Model Pipeline: XGBoost Classifier
+# Partial Dependency Plots
 In [0]:
-from xgboost import XGBClassifier
-encoder = ce.ordinal.OrdinalEncoder()
-X_trainLR_encoded = encoder.fit_transform(X_trainLR)
-X_val_encoded = encoder.transform(X_val)
-
-XGBmodel = XGBClassifier(
-    n_estimators=1000, # upper threshold
-    max_depth=3, # use higher values if dealing with a lot of high-cardinality features
-    learning_rate=0.5,
-    n_jobs=-1
-)
-XGBoost Classifier Evaluation
-In [74]:
-eval_set = [(X_trainLR_encoded, y_trainLR), (X_val_encoded, y_val)]
-XGBmodel.fit(X_trainLR_encoded, 
-          y_trainLR, 
-          eval_set=eval_set, 
-          eval_metric='merror',
-          early_stopping_rounds=50) # stop if the score hasn't improved in 50 rounds/iterations
-[0]	validation_0-merror:0.600148	validation_1-merror:0.670623
-Multiple eval metrics have been passed: 'validation_1-merror' will be used for early stopping.
-
-Will train until validation_1-merror hasn't improved in 50 rounds.
-[1]	validation_0-merror:0.580861	validation_1-merror:0.682493
-[2]	validation_0-merror:0.568249	validation_1-merror:0.67359
-[3]	validation_0-merror:0.554896	validation_1-merror:0.679525
-[4]	validation_0-merror:0.555638	validation_1-merror:0.688427
-[5]	validation_0-merror:0.551187	validation_1-merror:0.670623
-[6]	validation_0-merror:0.555638	validation_1-merror:0.664688
-[7]	validation_0-merror:0.545994	validation_1-merror:0.667656
-[8]	validation_0-merror:0.533383	validation_1-merror:0.661721
-[9]	validation_0-merror:0.526706	validation_1-merror:0.658754
-[10]	validation_0-merror:0.525223	validation_1-merror:0.655786
-[11]	validation_0-merror:0.512611	validation_1-merror:0.652819
-[12]	validation_0-merror:0.506677	validation_1-merror:0.664688
-[13]	validation_0-merror:0.502967	validation_1-merror:0.664688
-[14]	validation_0-merror:0.5	validation_1-merror:0.649852
-[15]	validation_0-merror:0.494807	validation_1-merror:0.643917
-[16]	validation_0-merror:0.488872	validation_1-merror:0.661721
-[17]	validation_0-merror:0.485163	validation_1-merror:0.664688
-[18]	validation_0-merror:0.477745	validation_1-merror:0.667656
-[19]	validation_0-merror:0.471068	validation_1-merror:0.658754
-[20]	validation_0-merror:0.464392	validation_1-merror:0.658754
-[21]	validation_0-merror:0.459199	validation_1-merror:0.667656
-[22]	validation_0-merror:0.457715	validation_1-merror:0.658754
-[23]	validation_0-merror:0.45549	validation_1-merror:0.664688
-[24]	validation_0-merror:0.45178	validation_1-merror:0.676558
-[25]	validation_0-merror:0.454748	validation_1-merror:0.670623
-[26]	validation_0-merror:0.452522	validation_1-merror:0.670623
-[27]	validation_0-merror:0.448813	validation_1-merror:0.67359
-[28]	validation_0-merror:0.436944	validation_1-merror:0.682493
-[29]	validation_0-merror:0.428783	validation_1-merror:0.682493
-[30]	validation_0-merror:0.433234	validation_1-merror:0.679525
-[31]	validation_0-merror:0.429525	validation_1-merror:0.676558
-[32]	validation_0-merror:0.426558	validation_1-merror:0.679525
-[33]	validation_0-merror:0.419139	validation_1-merror:0.676558
-[34]	validation_0-merror:0.418398	validation_1-merror:0.670623
-[35]	validation_0-merror:0.410979	validation_1-merror:0.679525
-[36]	validation_0-merror:0.410979	validation_1-merror:0.68546
-[37]	validation_0-merror:0.409496	validation_1-merror:0.682493
-[38]	validation_0-merror:0.405786	validation_1-merror:0.676558
-[39]	validation_0-merror:0.401335	validation_1-merror:0.676558
-[40]	validation_0-merror:0.397626	validation_1-merror:0.682493
-[41]	validation_0-merror:0.396142	validation_1-merror:0.676558
-[42]	validation_0-merror:0.390208	validation_1-merror:0.67359
-[43]	validation_0-merror:0.389466	validation_1-merror:0.670623
-[44]	validation_0-merror:0.386499	validation_1-merror:0.676558
-[45]	validation_0-merror:0.388724	validation_1-merror:0.679525
-[46]	validation_0-merror:0.383531	validation_1-merror:0.67359
-[47]	validation_0-merror:0.379822	validation_1-merror:0.676558
-[48]	validation_0-merror:0.374629	validation_1-merror:0.676558
-[49]	validation_0-merror:0.371662	validation_1-merror:0.676558
-[50]	validation_0-merror:0.370178	validation_1-merror:0.67359
-[51]	validation_0-merror:0.369436	validation_1-merror:0.67359
-[52]	validation_0-merror:0.364243	validation_1-merror:0.661721
-[53]	validation_0-merror:0.357567	validation_1-merror:0.664688
-[54]	validation_0-merror:0.355341	validation_1-merror:0.655786
-[55]	validation_0-merror:0.352374	validation_1-merror:0.661721
-[56]	validation_0-merror:0.350148	validation_1-merror:0.667656
-[57]	validation_0-merror:0.347923	validation_1-merror:0.670623
-[58]	validation_0-merror:0.346439	validation_1-merror:0.67359
-[59]	validation_0-merror:0.345697	validation_1-merror:0.679525
-[60]	validation_0-merror:0.344956	validation_1-merror:0.676558
-[61]	validation_0-merror:0.34273	validation_1-merror:0.676558
-[62]	validation_0-merror:0.34273	validation_1-merror:0.679525
-[63]	validation_0-merror:0.339763	validation_1-merror:0.679525
-[64]	validation_0-merror:0.339021	validation_1-merror:0.67359
-[65]	validation_0-merror:0.333828	validation_1-merror:0.682493
-Stopping. Best iteration:
-[15]	validation_0-merror:0.494807	validation_1-merror:0.643917
-
-Out[74]:
-XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-              colsample_bynode=1, colsample_bytree=1, gamma=0,
-              learning_rate=0.5, max_delta_step=0, max_depth=3,
-              min_child_weight=1, missing=None, n_estimators=1000, n_jobs=-1,
-              nthread=None, objective='multi:softprob', random_state=0,
-              reg_alpha=0, reg_lambda=1, scale_pos_weight=1, seed=None,
-              silent=None, subsample=1, verbosity=1)
-Partial Dependency Plots
-In [0]:
+```python
 from pdpbox.pdp import pdp_interact, pdp_interact_plot, pdp_isolate, pdp_plot
+```
 In [0]:
+```python
 X_test=X_test.fillna(method='ffill')
+```
+
 In [0]:
+```python
 features = ['price','alcohol_by_volume']
 
 interact = pdp_interact(
@@ -874,11 +810,16 @@ interact = pdp_interact(
     model_features=X_test.columns,
     features=features
 )
+```
+
 In [95]:
+```python
 pdp_interact_plot(interact, plot_type='grid', feature_names=features);
 findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
+```
 
 In [107]:
+```python
 feature = 'price'
 
 isolated = pdp_isolate(
@@ -889,8 +830,10 @@ isolated = pdp_isolate(
 )
 
 pdp_plot(isolated, feature_name=feature, plot_lines=True);
+```
 
 In [108]:
+```python
 feature = 'alcohol_by_volume'
 
 isolated = pdp_isolate(
@@ -901,5 +844,4 @@ isolated = pdp_isolate(
 )
 
 pdp_plot(isolated, feature_name=feature, plot_lines=True);
-
-In [0]:
+```
