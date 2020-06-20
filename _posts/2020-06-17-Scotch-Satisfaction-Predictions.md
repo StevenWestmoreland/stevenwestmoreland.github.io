@@ -29,7 +29,7 @@ My target therefore initially was pegged to be the review point score from Whisk
 For the models themselves, I will be evaluating their performance on Accuracy, Precision, and Recall, as well as taking a look at sci-kit learn's classification report metric. As you will see shortly, Accuracy alone will prove inadequate due to the relative evenness of the classes (our baselines run from 20.1% to 27.7% on a random guess).
 
 # Exploratory Analysis
-In [1]:
+In [1]:  
 `# Imports and first dataset reading. Cleaned Index column and renamed column `  
 `# 'review.point' to avoid any unnecessary issues with dot-notation.`  
 `import pandas as pd`  
@@ -44,73 +44,77 @@ In [1]:
 `import warnings`  
 `warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')`
 
-In [2]:
-scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
-scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})
-scotch_df.head()
-Out[2]:
+In [2]:  
+`scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')`  
+`scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})`  
+`scotch_df.head()`  
+Out[2]:  
 name	category	review_point	price	currency	description
 0	Johnnie Walker Blue Label, 40%	Blended Scotch Whisky	97	225	$</td> <td>Magnificently powerful and intense. Caramels, ...</td> </tr> <tr> <th>1</th> <td>Black Bowmore, 1964 vintage, 42 year old, 40.5%</td> <td>Single Malt Scotch</td> <td>97</td> <td>4500.00</td> <td>$	What impresses me most is how this whisky evol...
 2	Bowmore 46 year old (distilled 1964), 42.9%	Single Malt Scotch	97	13500.00	$</td> <td>There have been some legendary Bowmores from t...</td> </tr> <tr> <th>3</th> <td>Compass Box The General, 53.4%</td> <td>Blended Malt Scotch Whisky</td> <td>96</td> <td>325</td> <td>$	With a name inspired by a 1926 Buster Keaton m...
 4	Chivas Regal Ultis, 40%	Blended Malt Scotch Whisky	96	160	$	Captivating, enticing, and wonderfully charmin...
-In [3]:
-# check for null values
-scotch_df.isnull().sum()
+
+In [3]:  
+`# check for null values`  
+`scotch_df.isnull().sum()`  
 Out[3]:
-name            0
-category        0
-review_point    0
-price           0
-currency        0
-description     0
-dtype: int64
+`name            0`  
+`category        0`  
+`review_point    0`  
+`price           0`  
+`currency        0`  
+`description     0`  
+`dtype: int64`
+
 Since we are looking at predicting how well a scotch might be recieved, I initially pegged the 'review_point' column as my target variable.
 
-In [4]:
-scotch_df['review_point'].value_counts(normalize=True)
-Out[4]:
-87    0.098353
-86    0.097018
-88    0.090788
-85    0.088117
-89    0.087672
-90    0.083667
-84    0.076992
-83    0.062750
-92    0.049844
-91    0.047619
-82    0.042724
-93    0.037383
-80    0.036938
-81    0.029372
-94    0.019137
-79    0.013796
-95    0.010681
-78    0.008011
-77    0.005340
-96    0.004450
-72    0.001780
-76    0.001335
-75    0.001335
-97    0.001335
-74    0.000890
-70    0.000890
-73    0.000890
-71    0.000445
-63    0.000445
-Name: review_point, dtype: float64
-In [5]:
-scotch_df['review_point'].describe()
-Out[5]:
-count    2247.000000
-mean       86.700045
-std         4.054055
-min        63.000000
-25%        84.000000
-50%        87.000000
-75%        90.000000
-max        97.000000
-Name: review_point, dtype: float64
+In [4]:  
+`scotch_df['review_point'].value_counts(normalize=True)`  
+Out[4]:  
+`87    0.098353`  
+`86    0.097018`  
+`88    0.090788`  
+`85    0.088117`  
+`89    0.087672`  
+`90    0.083667`  
+`84    0.076992`  
+`83    0.062750`  
+`92    0.049844`  
+`91    0.047619`  
+`82    0.042724`  
+`93    0.037383`  
+`80    0.036938`  
+`81    0.029372`  
+`94    0.019137`  
+`79    0.013796`  
+`95    0.010681`  
+`78    0.008011`  
+`77    0.005340`  
+`96    0.004450`  
+`72    0.001780`  
+`76    0.001335`  
+`75    0.001335`  
+`97    0.001335`  
+`74    0.000890`  
+`70    0.000890`  
+`73    0.000890`  
+`71    0.000445`  
+`63    0.000445`  
+`Name: review_point, dtype: float64'`
+
+In [5]:  
+`scotch_df['review_point'].describe()`  
+Out[5]:  
+`count    2247.000000`  
+`mean       86.700045`  
+`std         4.054055`  
+`min        63.000000`  
+`25%        84.000000`  
+`50%        87.000000`  
+`75%        90.000000`  
+`max        97.000000`  
+`Name: review_point, dtype: float64`  
+
 As you can see, we've a bunch of possible outcomes and not enough features to make good predictions from. At 29 posible outcomes, and only seven features, it just isn't feasible. At least, not with any significant accuracy.
 
 Instead, I opted to combined multiple scores into one of four categories: Poor, Fair, Good, or Excellent. This moved my model from one of regression to classification.
