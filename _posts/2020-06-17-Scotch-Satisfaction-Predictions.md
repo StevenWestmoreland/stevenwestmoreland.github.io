@@ -360,6 +360,7 @@ Out [39]
 `['price', 'alcohol_by_volume', 'category', 'age']`
 
 In [0]:
+```python
 # Arrange data into X feature matrix and y target vector
 X_train = train[features]
 X_test = test[features]
@@ -370,6 +371,7 @@ X_trainLR=trainLR[features]
 X_val=val[features]
 y_trainLR=trainLR[target]
 y_val=val[target]
+```
 
 In [41]:
 X_train.shape
