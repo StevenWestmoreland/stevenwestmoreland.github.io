@@ -30,24 +30,28 @@ For the models themselves, I will be evaluating their performance on Accuracy, P
 
 # Exploratory Analysis
 In [1]:  
-`# Imports and first dataset reading. Cleaned Index column and renamed column `  
-`# 'review.point' to avoid any unnecessary issues with dot-notation.`  
-`import pandas as pd`  
-`import numpy as np`  
-`import matplotlib.pyplot as plt`  
-`import seaborn as sns`
+```python
+# Imports and first dataset reading. Cleaned Index column and renamed column 
+# 'review.point' to avoid any unnecessary issues with dot-notation.
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-`!pip install eli5`  
-`!pip install category_encoders==2.*`  
-`!pip install pdpbox`
+!pip install eli5 
+!pip install category_encoders==2.*
+!pip install pdpbox
 
-`import warnings`  
-`warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')`
+import warnings
+warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')
+```
 
 In [2]:  
-`scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')`  
-`scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})`  
-`scotch_df.head()`  
+``` python
+scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
+scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})
+scotch_df.head()
+```
 Out[2]:  
 name	category	review_point	price	currency	description
 0	Johnnie Walker Blue Label, 40%	Blended Scotch Whisky	97	225	$</td> <td>Magnificently powerful and intense. Caramels, ...</td> </tr> <tr> <th>1</th> <td>Black Bowmore, 1964 vintage, 42 year old, 40.5%</td> <td>Single Malt Scotch</td> <td>97</td> <td>4500.00</td> <td>$	What impresses me most is how this whisky evol...
@@ -55,16 +59,20 @@ name	category	review_point	price	currency	description
 4	Chivas Regal Ultis, 40%	Blended Malt Scotch Whisky	96	160	$	Captivating, enticing, and wonderfully charmin...
 
 In [3]:  
-`# check for null values`  
-`scotch_df.isnull().sum()`  
+```python
+# check for null values
+scotch_df.isnull().sum()
+```
 Out[3]:  
-`name            0`  
-`category        0`  
-`review_point    0`  
-`price           0`  
-`currency        0`  
-`description     0`  
-`dtype: int64`
+```
+name            0
+category        0
+review_point    0
+price           0
+currency        0
+description     0
+dtype: int64
+```
 
 Since we are looking at predicting how well a scotch might be recieved, I initially pegged the `review_point` column as my target variable.
 
