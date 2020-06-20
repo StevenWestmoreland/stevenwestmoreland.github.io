@@ -246,7 +246,7 @@ In [23]:
 ```python
 sns.pairplot(scotch_df);
 ```
-![](https://i.imgur.com/0oJCBxM.png "EDA Pairplot 1)
+![](https://i.imgur.com/0oJCBxM.png "EDA Pairplot 1")
 
 There seems to be a number of outliers in `price`, which make these visualizations hard to read.
 
