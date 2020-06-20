@@ -246,6 +246,7 @@ In [23]:
 ```python
 sns.pairplot(scotch_df);
 ```
+!(https://i.imgur.com/0oJCBxM.png "EDA Pairplot 1)
 
 There seems to be a number of outliers in `price`, which make these visualizations hard to read.
 
@@ -553,7 +554,7 @@ In [111]:
 feature_names = X_val.columns.tolist()
 eli5.show_weights(permuter, top=None, feature_names=feature_names)
 ```
-Out[111]:
+Out[111]:  
 | **Weight** | **Feature** |
 | --- | --- |
 | 0.0623 ± 0.0168 | price |
@@ -730,10 +731,12 @@ plt.title(f'Top {n} features')
 importances.sort_values()[-n:].plot.barh(color='grey');
 ```
 
+---
+
 # Random Forest Classification using Train/Val split
 I was curious to see if the Cross Validation performed better than my own Train/Val split, so I also ran the model this way.
 
-# Model Pipeline: Random Forest Train/Val Split
+## Model Pipeline: Random Forest Train/Val Split
 In [57]:
 ```python
 # first, run the pipeline on the train/val split
