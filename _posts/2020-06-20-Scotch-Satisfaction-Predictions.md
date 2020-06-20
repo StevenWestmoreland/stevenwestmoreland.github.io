@@ -12,7 +12,7 @@ comments: true
 # Predicting Scotch Satisfaction Ratings
 *The dataset that was used in this project can be found [here](https://www.kaggle.com/koki25ando/22000-scotch-whisky-reviews) on Kaggle. It was collected from Whisky Advocate by Kaggle user Andy II.*
 
-Project synopsis: Can we predict whether a whisky can be considered Poor, Fair, Good, or Excellent based off of it's category, Whisky Advocate score, price, and the reviewer's description?
+**Project synopsis**: Can we predict whether a whisky can be considered Poor, Fair, Good, or Excellent based off of it's category, Whisky Advocate score, price, and the reviewer's description?
 
 *Note: This project uses scotch and whisky interchangably. While the author is aware that the wide world of whisky extends far beyond scotch alone, for this project we will just be looking at scotch whiskies and it is therefore inaccurate for use with bourbons, Japanese or Irish whiskies, or any other variation thereof.*
 
