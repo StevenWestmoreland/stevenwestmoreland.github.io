@@ -28,6 +28,8 @@ My target therefore initially was pegged to be the review point score from Whisk
 
 For the models themselves, I will be evaluating their performance on Accuracy, Precision, and Recall, as well as taking a look at sci-kit learn's classification report metric. As you will see shortly, Accuracy alone will prove inadequate due to the relative evenness of the classes (our baselines run from 20.1% to 27.7% on a random guess).
 
+---
+
 # Exploratory Analysis
 In [1]:  
 ```python
@@ -348,6 +350,8 @@ scotch_5000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8)
 
 The first and third visualizations did not change by much, but we can see how much the outliers affect the price to category box-plot comparison.
 
+---
+
 # Train/Val/Test Split
 *Note: here on out I will be primarily using the created scotch_1000 dataset, except where otherwise noted.*
 
@@ -550,20 +554,14 @@ feature_names = X_val.columns.tolist()
 eli5.show_weights(permuter, top=None, feature_names=feature_names)
 ```
 Out[111]:
-```python
-Weight	Feature
-0.0623 ± 0.0168	price
-0.0552 ± 0.0245	alcohol_by_volume
-0.0344 ± 0.0233	age
-0.0071 ± 0.0264	category
-```
-
 | **Weight** | **Feature** |
 | --- | --- |
 | 0.0623 ± 0.0168 | price |
 | 0.0552 ± 0.0245 | alcohol_by_volume |
 | 0.0344 ± 0.0233 | age |
 | 0.0071 ± 0.0264 | category |
+
+---
 
 # Logistic Regression
 My linear model utilizes Logistic Regression to predict the satisfaction rating of the test observations. Unlinke my later models, I needed to split the training data into training and validation datasets. I chose to split these randomly at 80%/20% train/validation.
@@ -624,6 +622,8 @@ Out [49]:
    macro avg       0.30      0.30      0.29       422
 weighted avg       0.30      0.30      0.29       422
 ```
+
+---
 
 # Random Forest Classification with Cross Validation
 For my tree-based model, I decided to utilize a Random Forest with Cross Validation. This classification model is ideal for this useage due to the multi-class nature of the classification. It also allows for a more accurate model compared to a single Decision Tree model.
@@ -797,6 +797,8 @@ Out [61]:
 weighted avg       0.32      0.32      0.32       422
 ```
 
+---
+
 # Partial Dependency Plots
 In [0]:
 ```python
@@ -852,3 +854,7 @@ isolated = pdp_isolate(
 
 pdp_plot(isolated, feature_name=feature, plot_lines=True);
 ```
+
+---
+
+# Final Thoughts
