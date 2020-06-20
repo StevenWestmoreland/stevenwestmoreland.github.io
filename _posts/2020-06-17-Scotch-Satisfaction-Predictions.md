@@ -52,13 +52,7 @@ In [2]:
 ``` python
 scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
 scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})
-scotch_df.head()
 ```
-Out[2]:  
-name	category	review_point	price	currency	description
-0	Johnnie Walker Blue Label, 40%	Blended Scotch Whisky	97	225	$</td> <td>Magnificently powerful and intense. Caramels, ...</td> </tr> <tr> <th>1</th> <td>Black Bowmore, 1964 vintage, 42 year old, 40.5%</td> <td>Single Malt Scotch</td> <td>97</td> <td>4500.00</td> <td>$	What impresses me most is how this whisky evol...
-2	Bowmore 46 year old (distilled 1964), 42.9%	Single Malt Scotch	97	13500.00	$</td> <td>There have been some legendary Bowmores from t...</td> </tr> <tr> <th>3</th> <td>Compass Box The General, 53.4%</td> <td>Blended Malt Scotch Whisky</td> <td>96</td> <td>325</td> <td>$	With a name inspired by a 1926 Buster Keaton m...
-4	Chivas Regal Ultis, 40%	Blended Malt Scotch Whisky	96	160	$	Captivating, enticing, and wonderfully charmin...
 
 In [3]:  
 ```python
@@ -145,25 +139,7 @@ scotch_df.loc[scotch_df['review_point'] >= 90, 'satisfaction_rating'] = 'Excelle
 scotch_df.loc[(scotch_df['review_point'] >= 87) & (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'
 scotch_df.loc[(scotch_df['review_point'] >= 84) & (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair'
 scotch_df.loc[scotch_df['review_point'] < 84, 'satisfaction_rating'] = 'Poor'
-
-scotch_df.sample(7)
 ```
-Out[6]:  
-name	category	review_point	price	currency	description	satisfaction_rating
-418	Blair Athol 23 year old (Diageo Special Releas...	Single Malt Scotch	90	460	$	This Perthshire single malt was distilled in 1...	Excellent
-495	Adelphi (distilled at Macallan) 14 year old 19...	Single Malt Scotch	90	117.00	$&lt;/td&gt;
-      &lt;td&gt;Here is Macallan in full-blown masculine mode....&lt;/td&gt;
-      &lt;td&gt;Excellent&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;th&gt;1809&lt;/th&gt;
-      &lt;td&gt;Bruichladdich Links, Torrey Pine, 15 year old,...&lt;/td&gt;
-      &lt;td&gt;Single Malt Scotch&lt;/td&gt;
-      &lt;td&gt;83&lt;/td&gt;
-      &lt;td&gt;85.00&lt;/td&gt;
-      &lt;td&gt;$	The 8th in a series of “Links” releases. This ...	Poor
-1584	Sir Edward’s Smoky, 40%	Blended Scotch Whisky	85	22	$</td> <td>This blend delivers just enough peat turf to l...</td> <td>Fair</td> </tr> <tr> <th>492</th> <td>The Macallan 1861 Replica, 42.7%</td> <td>Single Malt Scotch</td> <td>90</td> <td>180.00</td> <td>$	Antique amber color. Aromas of toffee and malt...	Excellent
-2156	Douglas Laing Premier Barrel (distilled at Gle...	Single Malt Scotch	80	95	$</td> <td>Another youthful offering from Douglas Laing i...</td> <td>Poor</td> </tr> <tr> <th>2095</th> <td>The BenRiach 12 year old, 46%</td> <td>Single Malt Scotch</td> <td>80</td> <td>63.00</td> <td>$	Clean, fresh and uncomplicated. Honeyed malt, ...	Poor
 
 In [7]:
 ```python
@@ -222,7 +198,7 @@ We can see here that price is recorded as a string, as indicative by not only a 
 
 `Price` would do better as a numerical feature, but in order to convert it I first needed to deal with the entry with the value "15,000 or $60,000/set". I'm not sure why exactly this entry has a value for purchasing it as a set, but since everything else is cost in USD per bottle that's the value I decided to keep.
 
-In [0]:  
+In [10]:  
 ```python
 # prep price entries to be converted to floats
 scotch_df = scotch_df.replace(to_replace ="$15,000 or $60,000/set", value ="15000")
@@ -234,7 +210,7 @@ scotch_df['price']=scotch_df['price'].str.replace(",","")
 
 I found two additional instances of similar entries, so I cleaned those while I was at it.
 
-In [0]:  
+In [11]:  
 ```python
 scotch_df['price']=scotch_df['price'].astype(float)
 ```
@@ -242,7 +218,7 @@ scotch_df['price']=scotch_df['price'].astype(float)
 ## EDA Visualizations
 Ok, so let's take a look at a few comparisions between the features.
 
-In [23]:  
+In [12]:  
 ```python
 sns.pairplot(scotch_df);
 ```
@@ -254,33 +230,33 @@ I could altogether drop them, because these specific whiskies are unobtainable f
 
 Instead, I opted to try out two different model sets, one that cuts outliers with a price of one thousand dollars or more, and another that raises the cutoff to five thousand.
 
-In [0]:  
+In [13]:  
 ```python
 scotch_1000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 1000.000000].index)
 scotch_5000=scotch_df.drop(scotch_df.loc[scotch_df['price'] > 5000.000000].index)
 ```
 
 ### EDA Visualizations for Scotch_1000
-In [25]:  
+In [14]:  
 ```python
 sns.pairplot(scotch_1000);
 ```
 ![](https://i.imgur.com/4HGIUi5.png "EDA Pairplot 2")
 
-In [26]:  
+In [15]:  
 ```python
 satisfaction_type = pd.crosstab(scotch_1000['category'], scotch_1000['satisfaction_rating'])
 satisfaction_type.plot(kind='barh', stacked=True);
 ```
 ![](https://i.imgur.com/GLEEf1J.png "scotch_1000 BarH")
 
-In [27]:  
+In [16]:  
 ```python
 scotch_1000.boxplot(column='price', by='category', rot=45, figsize=(10,8));
 ```
 ![](https://i.imgur.com/EmiDMvv.png "scotch_1000 Boxplot 1")
 
-In [28]:  
+In [17]:  
 ```python
 scotch_1000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));
 ```
@@ -288,11 +264,11 @@ scotch_1000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8)
 
 I noticed here that the first four boxes are similar, but Single Malt Scotch seems to have a disproportionately high number of outliers. Generally speaking, when people think of scotch they think of single malts. Perhaps there is just a disproportionately larger amount of these in our dataset to begin with? Looking at the original dataset, I got the following results:
 
-In [29]:  
+In [18]:  
 ```python
 scotch_df['category'].value_counts()
 ```
-Out[29]:  
+Out[18]:  
 ```python
 Single Malt Scotch            1819
 Blended Scotch Whisky          211
@@ -306,11 +282,11 @@ Single Malts are almost nine times as numerous as the next largest category, Ble
 
 In this case, I used the original scotch_df to see the distribution of categories, but I also wanted to see how it changed for scotch_1000 and scotch_5000. It looks like the majority of high-cost scotches were also Single Malts.
 
-In [30]:  
+In [19]:  
 ```python
 scotch_1000['category'].value_counts()
 ```
-Out[30]:  
+Out[19]:  
 ```python
 Single Malt Scotch            1694
 Blended Scotch Whisky          201
@@ -320,11 +296,11 @@ Grain Scotch Whisky             27
 Name: category, dtype: int64
 ```
 
-In [31]:  
+In [20]:  
 ```python
 scotch_5000['category'].value_counts()
 ```  
-Out[31]:  
+Out[20]:  
 ```python
 Single Malt Scotch            1783
 Blended Scotch Whisky          210
@@ -337,20 +313,20 @@ Name: category, dtype: int64
 ### EDA Visualizations for Scotch_5000
 I was curious to see how these same visualizations might change due to the raised cutoff for outlier values.
 
-In [32]:   
+In [21]:   
 ```python
 satisfaction_type = pd.crosstab(scotch_5000['category'], scotch_5000['satisfaction_rating'])
 satisfaction_type.plot(kind='barh', stacked=True);
 ```
 ![](https://i.imgur.com/gKDXXdB.png "scotch_5000 BarH")
 
-In [33]:  
+In [22]:  
 ```python
 scotch_5000.boxplot(column='price', by='category', rot=45, figsize=(10,8));
 ```
 ![](https://i.imgur.com/U6Y4E7H.png "scotch_5000 Boxplot 1")
 
-In [34]:  
+In [23]:  
 ```python
 scotch_5000.boxplot(column='review_point', by='category', rot=45, figsize=(10,8));
 ```
@@ -363,7 +339,7 @@ The first and third visualizations did not change by much, but we can see how mu
 # Train/Val/Test Split
 *Note: here on out I will be primarily using the created scotch_1000 dataset, except where otherwise noted.*
 
-In [35]:  
+In [24]:  
 ```python
 from sklearn.model_selection import train_test_split
 
@@ -371,18 +347,18 @@ train, test = train_test_split(scotch_1000, train_size=0.80, test_size=0.20, str
 
 train.shape, test.shape
 ```
-Out[35]:  
+Out[24]:  
 ```python
 ((1685, 7), (422, 7))
 ```
 
 Here, I opted to split the data into just training and test datasets. I will be using cross validation in my pipeline, which will provide my validation data.
 
-In [36]:  
+In [25]:  
 ```python
 train['satisfaction_rating'].value_counts(normalize=True)
 ```  
-Out[36]:  
+Out[25]:  
 ```python
 Good         0.282493
 Fair         0.271810
@@ -395,7 +371,7 @@ The satisfaction rating value_counts (normalized) are similar to what was repres
 
 If we were to look at our training dataset alone, our majority class does not change it's class, but it does increase to 28.25%.
 
-In [0]:  
+In [26]:  
 ```python
 # train/val split for use with Logistic Regression and Random Forest without
 # cross validation
@@ -407,7 +383,7 @@ Two common characteristics of whiskies that are often sought are the alcohol by 
 
 I extracted both of these characteristics and put them into thier own features. While ABV is required by law to be on the label (and is therefore included in each entry), age statements are not. Furthermore, not all whiskies have an identifiable age to state. In the cases where age statement was missing, I gave it a value of "No Age Statement".
 
-In [0]:  
+In [27]:  
 ```python
 def wrangle(X):
   ''' Wrangle train and test sets in the same way'''
@@ -436,7 +412,7 @@ trainLR = wrangle(trainLR)
 val = wrangle(val)
 ```
 
-In [39]:  
+In [28]:  
 ```python
 # The target is the satisfaction_rating feature
 target = 'satisfaction_rating'
@@ -456,12 +432,12 @@ categorical_features = cardinality[cardinality<=225].index.tolist()
 features = numeric_features + categorical_features
 print(features)
 ```
-Out [39]  
+Out [28]  
 ```python
 ['price', 'alcohol_by_volume', 'category', 'age']
 ```
 
-In [0]:
+In [29]:
 ```python
 # Arrange data into X feature matrix and y target vector
 X_train = train[features]
@@ -475,11 +451,11 @@ y_trainLR=trainLR[target]
 y_val=val[target]
 ```
 
-In [41]:
+In [30]:
 ```python
 X_train.shape
 ```
-Out[41]:
+Out[30]:
 ```python
 (1685, 4)
 ```
@@ -487,7 +463,7 @@ Out[41]:
 ### Permutation Importance
 Even though I only have four features, I decided to run a Permutation Importance as a just-in-case sort of thing.
 
-In [42]:
+In [31]:
 ```python
 # transform train data for use with eli5 library's PermutationImportance
 import category_encoders as ce
@@ -505,7 +481,7 @@ X_val_transformed = transformers.transform(X_val)
 model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
 model.fit(X_trainLR_transformed, y_trainLR)
 ```
-Out[42]:
+Out[31]:
 ```python
 RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
                        criterion='gini', max_depth=None, max_features='auto',
@@ -517,7 +493,7 @@ RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,
                        warm_start=False)
 ```
 
-In [43]:
+In [32]:
 ```python
 # import, instantiate, and fit permuter
 import eli5
@@ -531,7 +507,7 @@ permuter = PermutationImportance(
 
 permuter.fit(X_val_transformed, y_val)
 ```
-Out[43]:
+Out[32]:
 ```python
 PermutationImportance(cv='prefit',
                       estimator=RandomForestClassifier(bootstrap=True,
@@ -556,12 +532,12 @@ PermutationImportance(cv='prefit',
                       n_iter=5, random_state=42, refit=True,
                       scoring='accuracy')
 ```
-In [111]:
+In [33]:
 ```python
 feature_names = X_val.columns.tolist()
 eli5.show_weights(permuter, top=None, feature_names=feature_names)
 ```
-Out[111]:  
+Out[33]:  
 | **Weight** | **Feature** |
 | --- | --- |
 | 0.0623 ± 0.0168 | price |
@@ -575,7 +551,7 @@ Out[111]:
 My linear model utilizes Logistic Regression to predict the satisfaction rating of the test observations. Unlinke my later models, I needed to split the training data into training and validation datasets. I chose to split these randomly at 80%/20% train/validation.
 
 ## Model Pipeline: Logistic Regression
-In [46]:
+In [34]:
 ```python
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -588,22 +564,22 @@ LR_pipe.fit(X_trainLR, y_trainLR)
 print(f'Train accuracy: {LR_pipe.score(X_trainLR, y_trainLR)}')
 print(f'Validation accuracy: {LR_pipe.score(X_val, y_val)}')
 ```
-Out [46]:  
+Out [34]:  
 Train accuracy: 0.3879821958456973
 Validation accuracy: 0.31750741839762614
 
 ## Logistic Regression Evaluation
-In [47]:
+In [35]:
 ```python
 from sklearn.metrics import accuracy_score
 
 y_pred_LR = LR_pipe.predict(X_test)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_LR)}')
 ```
-Out [47]:  
+Out [35]:  
 Prediction accuracy: 0.3033175355450237
 
-In [48]:
+In [36]:
 ```python
 from sklearn.metrics import plot_confusion_matrix
 
@@ -612,13 +588,13 @@ plot_confusion_matrix(LR_pipe, X_test, y_test, normalize='true',
 ```
 ![](https://i.imgur.com/Cqq5Qax.png "Logistic Regression Confusion Matrix")
 
-In [49]:
+In [37]:
 ```python
 from sklearn.metrics import classification_report
 
 print(classification_report(y_test, y_pred_LR))
 ```
-Out [49]:
+Out [37]:
 ```python
               precision    recall  f1-score   support
 
@@ -640,7 +616,7 @@ For my tree-based model, I decided to utilize a Random Forest with Cross Validat
 Because of the use of cross validation, the training dataset did not need to be split into train and validation datasets.
 
 ## Model Pipeline: Random Forest with Cross Validation
-In [50]:
+In [38]:
 ```python
 # Make a pipeline for the model
 from sklearn.model_selection import cross_val_score
@@ -654,12 +630,12 @@ k=18
 scores = cross_val_score(CVRF_pipe, X_train, y_train, cv=k, scoring='accuracy')
 print(f'Accuracy for {k} folds:', scores)
 ```
-Out [50]:  
+Out [38]:  
 Accuracy for 18 folds: [0.25531915 0.30851064 0.36170213 0.30851064 0.32978723 0.39361702
  0.34042553 0.38297872 0.38297872 0.38297872 0.34042553 0.31182796
  0.30107527 0.3655914  0.2688172  0.34408602 0.35483871 0.32258065]
 
-In [51]:
+In [39]:
 ```python
 from scipy.stats import randint, uniform
 from sklearn.model_selection import RandomizedSearchCV
@@ -686,7 +662,7 @@ search.fit(X_train, y_train);
 ```
 
 ## Random Forest with CV Evaluation
-In [53]:
+In [40]:
 ```python
 CV_best_pipe = search.best_estimator_
 
@@ -694,24 +670,24 @@ y_pred_RF = CV_best_pipe.predict(X_test)
 print(f'Validation accuracy for {k} folds:', scores)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_RF)}')
 ```
-Out [53]:  
+Out [40]:  
 Validation accuracy for 18 folds: [0.25531915 0.30851064 0.36170213 0.30851064 0.32978723 0.39361702
  0.34042553 0.38297872 0.38297872 0.38297872 0.34042553 0.31182796
  0.30107527 0.3655914  0.2688172  0.34408602 0.35483871 0.32258065]
 Prediction accuracy: 0.3459715639810427
 
-In [54]:
+In [41]:
 ```python
 plot_confusion_matrix(CV_best_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
 ```
 ![](https://i.imgur.com/pmDJtHf.png "Random Forest with Cross Validation Confusion Matrix")
 
-In [55]:
+In [42]:
 ```python
 print(classification_report (y_test, y_pred_RF))
 ```
-Out [55]:  
+Out [42]:  
 ```python
               precision    recall  f1-score   support
 
@@ -725,7 +701,7 @@ Out [55]:
 weighted avg       0.35      0.35      0.34       422
 ```
 
-In [56]:
+In [43]:
 ```python
 # Get feature importances
 rf = CV_best_pipe.named_steps['randomforestclassifier']
@@ -747,7 +723,7 @@ importances.sort_values()[-n:].plot.barh(color='grey');
 I was curious to see if the Cross Validation performed better than my own Train/Val split, so I also ran the model this way.
 
 ## Model Pipeline: Random Forest Train/Val Split
-In [57]:
+In [44]:
 ```python
 # first, run the pipeline on the train/val split
 RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
@@ -759,11 +735,11 @@ RF_pipe.fit(X_trainLR, y_trainLR)
 print(f'Train accuracy: {RF_pipe.score(X_trainLR, y_trainLR)}')
 print(f'Validation accuracy: {RF_pipe.score(X_val, y_val)}')
 ```
-Out [57]:  
+Out [44]:  
 Train accuracy: 0.913946587537092
 Validation accuracy: 0.32344213649851633
 
-In [58]:
+In [45]:
 ```python
 # then fit it back to the full training data set
 RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
@@ -774,30 +750,30 @@ RF_pipe = make_pipeline(ce.ordinal.OrdinalEncoder(),
 RF_pipe.fit(X_train, y_train)
 print(f'Train (full dataset) accuracy: {RF_pipe.score(X_train, y_train)}')
 ```
-Out [58]:  
+Out [45]:  
 Train (full dataset) accuracy: 0.9014836795252226
 
 ## Random Forest Train/Val Split Evaluation
-In [59]:
+In [46]:
 ```python
 y_pred_RFSplit = RF_pipe.predict(X_test)
 print(f'Prediction accuracy: {accuracy_score(y_test, y_pred_RFSplit)}')
 ```
-Out [59]:  
+Out [46]:  
 Prediction accuracy: 0.3175355450236967
 
-In [60]:
+In [47]:
 ```python
 plot_confusion_matrix(RF_pipe, X_test, y_test, normalize='true',
                       xticks_rotation='vertical', cmap='Blues');
 ```
 ![](https://i.imgur.com/oG8IyOh.png "Random Forest with Validation Split Confusion Matrix")
 
-In [61]:
+In [48]:
 ```python
 print(classification_report(y_test, y_pred_RFSplit))
 ```
-Out [61]:  
+Out [48]:  
 ```python
               precision    recall  f1-score   support
 
@@ -814,16 +790,16 @@ weighted avg       0.32      0.32      0.32       422
 ---
 
 # Partial Dependency Plots
-In [0]:
+In [49]:
 ```python
 from pdpbox.pdp import pdp_interact, pdp_interact_plot, pdp_isolate, pdp_plot
 ```
-In [0]:
+In [50]:
 ```python
 X_test=X_test.fillna(method='ffill')
 ```
 
-In [0]:
+In [51]:
 ```python
 features = ['price','alcohol_by_volume']
 
@@ -835,14 +811,14 @@ interact = pdp_interact(
 )
 ```
 
-In [95]:
+In [52]:
 ```python
 pdp_interact_plot(interact, plot_type='grid', feature_names=features);
 findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
 ```
 ![](https://i.imgur.com/chE9HpB.png "Two-feature PDP")
 
-In [107]:
+In [53]:
 ```python
 feature = 'price'
 
@@ -857,7 +833,7 @@ pdp_plot(isolated, feature_name=feature, plot_lines=True);
 ```
 ![](https://i.imgur.com/IHhWxCA.png "Price PDP")
 
-In [108]:
+In [54]:
 ```python
 feature = 'alcohol_by_volume'
 
