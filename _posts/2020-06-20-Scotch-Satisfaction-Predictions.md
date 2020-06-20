@@ -135,11 +135,12 @@ Even though the ratings theoretically are from 0 to 100, there is actually a ran
 
 In [6]:  
 ``` python
-scotch_df.loc[scotch_df['review_point'] >= 90, 'satisfaction_rating'] = 'Excellent'
-scotch_df.loc[(scotch_df['review_point'] >= 87) & 
-                  (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'
-scotch_df.loc[(scotch_df['review_point'] >= 84) & 
-                   (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair'
+scotch_df.loc[scotch_df['review_point'] >= 90,
+                                             'satisfaction_rating'] = 'Excellent'
+scotch_df.loc[(scotch_df['review_point'] >= 87) 
+              & (scotch_df['review_point'] < 90), 'satisfaction_rating'] = 'Good'
+scotch_df.loc[(scotch_df['review_point'] >= 84) 
+              & (scotch_df['review_point'] < 87), 'satisfaction_rating'] = 'Fair'
 scotch_df.loc[scotch_df['review_point'] < 84, 'satisfaction_rating'] = 'Poor'
 ```
 
