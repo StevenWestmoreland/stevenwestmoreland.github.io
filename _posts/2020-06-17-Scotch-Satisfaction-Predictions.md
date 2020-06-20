@@ -9,28 +9,28 @@ comments: true
 ---
 
 
-Predicting Scotch Satisfaction Ratings
-The dataset that was used in this project can be found here on Kaggle. It was collected from Whisky Advocate by Kaggle user Andy II.
+# Predicting Scotch Satisfaction Ratings
+*The dataset that was used in this project can be found [here](https://www.kaggle.com/koki25ando/22000-scotch-whisky-reviews) on Kaggle. It was collected from Whisky Advocate by Kaggle user Andy II.*
 
 Project synopsis: Can we predict whether a whisky can be considered Poor, Fair, Good, or Excellent based off of it's category, Whisky Advocate score, price, and the reviewer's description?
 
-Note: This project uses scotch and whisky interchangably. While the author is aware that the wide world of whisky extends far beyond scotch alone, for this project we will just be looking at scotch whiskies and it is therefore inaccurate for use with bourbons, Japanese or Irish whiskies, or any other variation thereof.
+*Note: This project uses scotch and whisky interchangably. While the author is aware that the wide world of whisky extends far beyond scotch alone, for this project we will just be looking at scotch whiskies and it is therefore inaccurate for use with bourbons, Japanese or Irish whiskies, or any other variation thereof.*
 
 This project is designed with two major applications in mind, one for the consumer and one for the distiller.
 
-For the consumer, it is my hope that this data can be useful in determining whether to give a whisky a try, While perhaps a bit unwieldy compared to directly consulting review sites such as Whisky Advocate, not all whiskies have reviews (or if they do there is a woefully small amount of them, which can bring into question how much partiality or bias went in to those scores.) Instead, by looking at the features used in these models and comparing them to prospective whiskies the consumer will be better armed in making an informed, and happily enjoyable, purchase.
+For the consumer, it is my hope that this data can be useful in determining whether to give a whisky a try. While perhaps a bit unwieldy compared to directly consulting review sites such as Whisky Advocate, not all whiskies have reviews (or if they do there is a woefully small amount of them, which can bring into question how much partiality or bias went in to those scores.) Instead, by looking at the features used in these models and comparing them to prospective whiskies the consumer will be better armed in making an informed, and happily enjoyable, purchase.
 
 Similarly, for the distiller, these models will show which key features lead more often than not towards Excellent ratings. This will allow for the tailoring of future mash bill recipes in ways to capitalize on the taste preferences of the consumer base.
 
 However, these models are limited in scope. They do not take into account things like mash bill recpie percentages, barrel aging processes, or other key phases of the distillation process. Neither are these models good for whiskies that have extensive reviews already, if for no other reason than it would be easier to consult a review site or app than it would to apply these models to the whisky in question.
 
-My target therefore initially was pegged to be the review point score from Whisky Advocate, but for reasons I will explain below I instead opted to create a new feature I called satisfaction rating. This feature is a categorical description of score bands with four separate classes: Excellent, Good, Fair, and Poor.
+My target therefore initially was pegged to be the review point score from Whisky Advocate, but for reasons I will explain below I instead opted to create a new feature I called satisfaction rating. This feature is a categorical description of score bands with four separate classes: **Excellent**, **Good**, **Fair**, and **Poor**.
 
 For the models themselves, I will be evaluating their performance on Accuracy, Precision, and Recall, as well as taking a look at sci-kit learn's classification report metric. As you will see shortly, Accuracy alone will prove inadequate due to the relative evenness of the classes (our baselines run from 20.1% to 27.7% on a random guess).
 
-Exploratory Analysis
+# Exploratory Analysis
 In [1]:
-# Imports and first dataset reading. Cleaned Index column and renamed column 
+`# Imports and first dataset reading. Cleaned Index column and renamed column 
 # 'review.point' to avoid any unnecessary issues with dot-notation.
 import pandas as pd
 import numpy as np
@@ -97,7 +97,7 @@ Building wheels for collected packages: pdpbox
   Stored in directory: /root/.cache/pip/wheels/7d/08/51/63fd122b04a2c87d780464eeffb94867c75bd96a64d500a3fe
 Successfully built pdpbox
 Installing collected packages: pdpbox
-Successfully installed pdpbox-0.2.0
+Successfully installed pdpbox-0.2.0`
 In [2]:
 scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
 scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})
