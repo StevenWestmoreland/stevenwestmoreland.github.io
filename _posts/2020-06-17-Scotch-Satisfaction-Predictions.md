@@ -30,74 +30,20 @@ For the models themselves, I will be evaluating their performance on Accuracy, P
 
 # Exploratory Analysis
 In [1]:
-`# Imports and first dataset reading. Cleaned Index column and renamed column 
-# 'review.point' to avoid any unnecessary issues with dot-notation.
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+`# Imports and first dataset reading. Cleaned Index column and renamed column `
+`# 'review.point' to avoid any unnecessary issues with dot-notation.`
+`import pandas as pd`
+`import numpy as np`
+`import matplotlib.pyplot as plt`
+`import seaborn as sns`
 
-!pip install eli5
-!pip install category_encoders==2.*
-!pip install pdpbox
+`!pip install eli5`
+`!pip install category_encoders==2.*`
+`!pip install pdpbox`
 
-import warnings
-warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')
-/usr/local/lib/python3.6/dist-packages/statsmodels/tools/_testing.py:19: FutureWarning: pandas.util.testing is deprecated. Use the functions in the public API at pandas.testing instead.
-  import pandas.util.testing as tm
-Collecting eli5
-  Downloading https://files.pythonhosted.org/packages/97/2f/c85c7d8f8548e460829971785347e14e45fa5c6617da374711dec8cb38cc/eli5-0.10.1-py2.py3-none-any.whl (105kB)
-     |████████████████████████████████| 112kB 4.5MB/s 
-Requirement already satisfied: numpy>=1.9.0 in /usr/local/lib/python3.6/dist-packages (from eli5) (1.18.5)
-Requirement already satisfied: six in /usr/local/lib/python3.6/dist-packages (from eli5) (1.12.0)
-Requirement already satisfied: graphviz in /usr/local/lib/python3.6/dist-packages (from eli5) (0.10.1)
-Requirement already satisfied: scipy in /usr/local/lib/python3.6/dist-packages (from eli5) (1.4.1)
-Requirement already satisfied: attrs>16.0.0 in /usr/local/lib/python3.6/dist-packages (from eli5) (19.3.0)
-Requirement already satisfied: tabulate>=0.7.7 in /usr/local/lib/python3.6/dist-packages (from eli5) (0.8.7)
-Requirement already satisfied: jinja2 in /usr/local/lib/python3.6/dist-packages (from eli5) (2.11.2)
-Requirement already satisfied: scikit-learn>=0.18 in /usr/local/lib/python3.6/dist-packages (from eli5) (0.22.2.post1)
-Requirement already satisfied: MarkupSafe>=0.23 in /usr/local/lib/python3.6/dist-packages (from jinja2->eli5) (1.1.1)
-Requirement already satisfied: joblib>=0.11 in /usr/local/lib/python3.6/dist-packages (from scikit-learn>=0.18->eli5) (0.15.1)
-Installing collected packages: eli5
-Successfully installed eli5-0.10.1
-Collecting category_encoders==2.*
-  Downloading https://files.pythonhosted.org/packages/44/57/fcef41c248701ee62e8325026b90c432adea35555cbc870aff9cfba23727/category_encoders-2.2.2-py2.py3-none-any.whl (80kB)
-     |████████████████████████████████| 81kB 3.4MB/s 
-Requirement already satisfied: scikit-learn>=0.20.0 in /usr/local/lib/python3.6/dist-packages (from category_encoders==2.*) (0.22.2.post1)
-Requirement already satisfied: patsy>=0.5.1 in /usr/local/lib/python3.6/dist-packages (from category_encoders==2.*) (0.5.1)
-Requirement already satisfied: scipy>=1.0.0 in /usr/local/lib/python3.6/dist-packages (from category_encoders==2.*) (1.4.1)
-Requirement already satisfied: numpy>=1.14.0 in /usr/local/lib/python3.6/dist-packages (from category_encoders==2.*) (1.18.5)
-Requirement already satisfied: pandas>=0.21.1 in /usr/local/lib/python3.6/dist-packages (from category_encoders==2.*) (1.0.4)
-Requirement already satisfied: statsmodels>=0.9.0 in /usr/local/lib/python3.6/dist-packages (from category_encoders==2.*) (0.10.2)
-Requirement already satisfied: joblib>=0.11 in /usr/local/lib/python3.6/dist-packages (from scikit-learn>=0.20.0->category_encoders==2.*) (0.15.1)
-Requirement already satisfied: six in /usr/local/lib/python3.6/dist-packages (from patsy>=0.5.1->category_encoders==2.*) (1.12.0)
-Requirement already satisfied: python-dateutil>=2.6.1 in /usr/local/lib/python3.6/dist-packages (from pandas>=0.21.1->category_encoders==2.*) (2.8.1)
-Requirement already satisfied: pytz>=2017.2 in /usr/local/lib/python3.6/dist-packages (from pandas>=0.21.1->category_encoders==2.*) (2018.9)
-Installing collected packages: category-encoders
-Successfully installed category-encoders-2.2.2
-Collecting pdpbox
-  Downloading https://files.pythonhosted.org/packages/87/23/ac7da5ba1c6c03a87c412e7e7b6e91a10d6ecf4474906c3e736f93940d49/PDPbox-0.2.0.tar.gz (57.7MB)
-     |████████████████████████████████| 57.7MB 69kB/s 
-Requirement already satisfied: pandas in /usr/local/lib/python3.6/dist-packages (from pdpbox) (1.0.4)
-Requirement already satisfied: numpy in /usr/local/lib/python3.6/dist-packages (from pdpbox) (1.18.5)
-Requirement already satisfied: scipy in /usr/local/lib/python3.6/dist-packages (from pdpbox) (1.4.1)
-Requirement already satisfied: matplotlib>=2.1.2 in /usr/local/lib/python3.6/dist-packages (from pdpbox) (3.2.1)
-Requirement already satisfied: joblib in /usr/local/lib/python3.6/dist-packages (from pdpbox) (0.15.1)
-Requirement already satisfied: psutil in /usr/local/lib/python3.6/dist-packages (from pdpbox) (5.4.8)
-Requirement already satisfied: scikit-learn in /usr/local/lib/python3.6/dist-packages (from pdpbox) (0.22.2.post1)
-Requirement already satisfied: pytz>=2017.2 in /usr/local/lib/python3.6/dist-packages (from pandas->pdpbox) (2018.9)
-Requirement already satisfied: python-dateutil>=2.6.1 in /usr/local/lib/python3.6/dist-packages (from pandas->pdpbox) (2.8.1)
-Requirement already satisfied: kiwisolver>=1.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib>=2.1.2->pdpbox) (1.2.0)
-Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.6/dist-packages (from matplotlib>=2.1.2->pdpbox) (0.10.0)
-Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib>=2.1.2->pdpbox) (2.4.7)
-Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.6/dist-packages (from python-dateutil>=2.6.1->pandas->pdpbox) (1.12.0)
-Building wheels for collected packages: pdpbox
-  Building wheel for pdpbox (setup.py) ... done
-  Created wheel for pdpbox: filename=PDPbox-0.2.0-cp36-none-any.whl size=57690722 sha256=3000a94b9b5e3d48a27b9836cd3a8c2387617bf5471cd66cb701a1fc8eed6526
-  Stored in directory: /root/.cache/pip/wheels/7d/08/51/63fd122b04a2c87d780464eeffb94867c75bd96a64d500a3fe
-Successfully built pdpbox
-Installing collected packages: pdpbox
-Successfully installed pdpbox-0.2.0`
+`import warnings
+warnings.filterwarnings(action='ignore', category=FutureWarning, module='numpy')`
+
 In [2]:
 scotch_df=pd.read_csv('scotch_review.csv').drop(columns='Unnamed: 0')
 scotch_df=scotch_df.rename(columns={'review.point': 'review_point'})
