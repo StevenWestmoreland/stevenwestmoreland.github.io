@@ -616,6 +616,8 @@ Out [37]:
 weighted avg       0.30      0.30      0.29       422
 ```
 
+Logistic Regression did not perform well at all. A 30% accuracy beats our baseline, but only barely. Precision ranged from 26% to 40%, and Recall was worse at 10% to 44%. the F1 score, at max, was only a 0.38. I would not recommend this model for use based on these results, but let's take a look at some Random Forest models and see if they perform any better. 
+
 ---
 
 # Random Forest Classification with Cross Validation
@@ -729,6 +731,12 @@ importances.sort_values()[-n:].plot.barh(color='grey');
 ```
 ![](https://i.imgur.com/au38ifp.png "Feature Importances")
 
+Random Forest with Cross Validation performed a little better, but with an accuracy of just over 34.5%, I still would be hesitant to recommend it's useage. Precision did better with a range of 29%-45%, as did Recall (18%-45%), but only marginally so.  One thing I found interesting was that In both models, it's the Excellent class that seems to have the best results. I was also intrigued to notice that True Poor rated whiskies were more likely to be predicted as Fair than Poor. 
+
+Upon further inspection, I noticed that there was a trend. While the true class was predicted about 1/3 of the time for both models, about 3/4 of the time if it wasn't correct then the prediction fell into the adjacent classes. What that means is, there is a little over a 75% accuracy for an Excellent whisky to be predicted as Excellent or Good, or for a Fair whisky to be predicted as Good, Fair, or Poor.
+
+In addition, `price` was the heaviest weighted feature, with `alcohol_by_volume` closely following. This to me makes sense, as often these are the first two things that people consider when contemplating trying a new whisky. That being said, I was rather surprised at how little the category of whisky seemed to affect the rating. I would have assumed that the Single Malt Scotch vs. Blended Scotch argument would have weighted this feature more. Perhaps the argument has less to do with whisky quality than the constituent side would like to admit.
+
 ---
 
 # Random Forest Classification using Train/Val split
@@ -805,9 +813,16 @@ Out [48]:
 weighted avg       0.32      0.32      0.32       422
 ```
 
+Once again, we've little deviation from our previous model. The Random Forest with a Training/Validation Split was less accurate at 31.75%. That being said, the Precision and Recall had a much smaller range; 27%-38% and 27% to 39% respectively. 
+
+Our trend that we noticed with the Cross Validation is also holding up; that at almost a 75% accuracy a whisky would be predicted either correctly, or as an adjacent class.
+
 ---
 
 # Partial Dependency Plots
+
+For the following plots, remember that classes go from class 0 (Excellent) to class 3 (Poor).
+
 In [49]:
 ```python
 from pdpbox.pdp import pdp_interact, pdp_interact_plot, pdp_isolate, pdp_plot
@@ -835,6 +850,10 @@ pdp_interact_plot(interact, plot_type='grid', feature_names=features);
 findfont: Font family ['Arial'] not found. Falling back to DejaVu Sans.
 ```
 ![](https://i.imgur.com/chE9HpB.png "Two-feature PDP")
+
+Perhaps unsurprisingly, a higher price was attributed to higher quality whiskies. What was more surprising to me was that a higher alcohol by volume was more associated with Fair and Poor whiskies. Perhaps this has to do with the relative "smoothness" of a whisky. Generally speaking, a higher ABV has an inversely proportional effect on how smooth a drink is perceived. Therefore, the "harsher" whiskies ended up with a lower rating. 
+
+Something I also found interesting was that for three of the plots, there is a distinct rectangular shape associated with the higher-associated features. Fair, however, had values all over the place with little pattern or regularity to it. I have little insight as to why this might be, beyond Fair possibly being the catch-all class. What I mean by this is, often people will define a whisky as good, bad (Poor), or great (Excellent). Anything else fell into Fair, and due to this there was no regularity in the features. This admittedly is, however, just a guess.
 
 In [53]:
 ```python
@@ -869,3 +888,11 @@ pdp_plot(isolated, feature_name=feature, plot_lines=True);
 ---
 
 # Final Thoughts
+
+The first question would be, are any of these models really usable? It is with regret that I would venture to say that they are not. Not at a rough accuracy, precision, and recall of 1 in 3. So how could these models be improved?
+
+One of the greatest weaknesses of these models is the relative lack of usable features. Four is not a lot of information to go on. In order to gain more features, Natural Language Processing techniques could be applied to the review description feature itself. There are sure to be key phrases in various reviews that may allow us to form a more accurate model. 
+
+The trend that I noticed seemed interesting to me, where predictions seemed to be off generally by only one class adjacent to the true value. This tells me that with a little more data to work with, probably with NLP as mentioned, the models would be better tuned towards usefulness.
+
+I also wanted to develop an interactable app that allowed one to change the `price` and `alcohol_by_volume` features to see how these two specifically might affect a prediction. However, my time ran short and I was unable to finish such an app.
